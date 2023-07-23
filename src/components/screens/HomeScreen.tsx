@@ -1,20 +1,23 @@
 import { styled } from "styled-components"
+import { theme } from "../../theme/theme"
 import { GameControls } from "../GameControls"
 import { GameInformation } from "../GameInformation"
 import { Maze } from "../Maze"
+import { MovesInventory } from "../ui/MovesInventory"
 
 export const HomeScreen = () => {
   return (
     <Root>
-      <SectionContainer>
+      <TopSectionContainer>
         <GameInformation />
-      </SectionContainer>
-      <SectionContainer>
+      </TopSectionContainer>
+      <MiddleSectionContainer>
         <Maze />
-      </SectionContainer>
-      <SectionContainer>
+      </MiddleSectionContainer>
+      <BottomSectionContainer>
+        <MovesInventory />
         <GameControls />
-      </SectionContainer>
+      </BottomSectionContainer>
     </Root>
   )
 }
@@ -23,10 +26,26 @@ const Root = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: space-between;
   height: 100%;
 `
 
-const SectionContainer = styled.div`
+const TopSectionContainer = styled.div`
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   width: 100%;
+`
+
+const MiddleSectionContainer = styled.div`
+  width: 100%;
+`
+
+const BottomSectionContainer = styled.div`
+  flex: 1;
+  display: flex;
+  width: 100%;
+  padding: ${theme.spacing(2)};
+  justify-content: space-around;
+  align-items: center;
 `
