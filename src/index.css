@@ -16,7 +16,6 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
-
 img,
 picture,
 video,
@@ -46,4 +45,19 @@ h6 {
 #root,
 #__next {
   isolation: isolate;
+}
+
+/*
+  additional resets
+*/
+html {
+  height: 100%;
+}
+
+body {
+  height: 100%;
+}
+
+#root {
+  height: 100%;
 }
