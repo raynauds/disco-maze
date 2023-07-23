@@ -35,17 +35,22 @@ const TopSectionContainer = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
+  padding-left: ${theme.spacing(2)};
+  padding-right: ${theme.spacing(2)};
 `
 
 const MiddleSectionContainer = styled.div`
   width: 100%;
+  padding-left: ${theme.spacing(2)};
+  padding-right: ${theme.spacing(2)};
 `
 
 const BottomSectionContainer = styled.div`
   flex: 1;
   display: flex;
   width: 100%;
-  padding: ${theme.spacing(2)};
   justify-content: space-around;
   align-items: center;
+  padding-left: ${theme.spacing(2)};
+  padding-right: ${theme.spacing(2)};
 `

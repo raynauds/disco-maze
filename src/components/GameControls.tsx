@@ -1,7 +1,7 @@
 import { styled } from "styled-components"
 import { UIControlButton } from "./ui/UIControlButton"
 
-type GameControlsProps = {}
+type GameControlsProps = Record<string, never>
 
 export const GameControls = ({}: GameControlsProps) => {
   return (

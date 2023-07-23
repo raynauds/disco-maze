@@ -1,6 +1,6 @@
 import { styled } from "styled-components"
 
-type UIBouncerAvatarProps = {}
+type UIBouncerAvatarProps = Record<string, never>
 
 export const UIBouncerAvatar = ({}: UIBouncerAvatarProps) => {
   return <Root></Root>

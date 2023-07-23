@@ -1,6 +1,6 @@
 import { styled } from "styled-components"
 
-type UIBouncerDialogProps = {}
+type UIBouncerDialogProps = Record<string, never>
 
 export const UIBouncerDialog = ({}: UIBouncerDialogProps) => {
   return <Root></Root>

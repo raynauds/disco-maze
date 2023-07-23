@@ -2,7 +2,7 @@ import { styled } from "styled-components"
 import { theme } from "../../theme/theme"
 import { UIMove } from "./UIMove"
 
-type MovesInventoryProps = {}
+type MovesInventoryProps = Record<string, never>
 
 export const MovesInventory = ({}: MovesInventoryProps) => {
   return (

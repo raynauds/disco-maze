@@ -5,7 +5,7 @@ import { UIBouncerDialog } from "./ui/UIBouncerDialog"
 import { UICheckbox } from "./ui/UICheckbox"
 import { UIMove } from "./ui/UIMove"
 
-type GameInformationProps = {}
+type GameInformationProps = Record<string, never>
 
 export const GameInformation = ({}: GameInformationProps) => {
   return (
@@ -40,8 +40,9 @@ export const GameInformation = ({}: GameInformationProps) => {
 const Root = styled.div`
   display: flex;
   width: 100%;
+  justify-content: space-around;
   padding: ${theme.spacing(2)};
-  border: 1px dashed grey;
+  border: 1px dashed lightgrey;
 `
 
 const FindContainer = styled.div`
