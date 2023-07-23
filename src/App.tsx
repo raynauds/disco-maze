@@ -1,20 +1,21 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 import { HomeScreen } from "./components/screens/HomeScreen"
-import { GameState } from "./rune/logic"
+import { useGame, useSetGameState } from "./stores/game.store"
 
 function App() {
-  const [game, setGame] = useState<GameState>()
+  const game = useGame()
+  const setGame = useSetGameState()
 
   useEffect(() => {
     Rune.initClient({
-      onChange: ({ newGame }) => {
-        setGame(newGame)
+      onChange: ({ newGame, players, yourPlayerId }) => {
+        setGame({ game: newGame, players, yourPlayerId })
       },
     })
-  }, [])
+  }, [setGame])
 
-  if (!game) {
+  if (!game?.isLoaded) {
     return <div>Loading...</div>
   }
 

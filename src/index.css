@@ -61,3 +61,7 @@ body {
 #root {
   height: 100%;
 }
+
+button {
+  border: none;
+}

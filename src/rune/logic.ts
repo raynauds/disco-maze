@@ -1,30 +1,85 @@
 import type { RuneClient } from "rune-games-sdk/multiplayer"
+import { MAZE_SIZE } from "../utils.ts/misc.utils"
+
+export type Direction = "top" | "bottom" | "left" | "right"
+
+export type PlayerData = {
+  position: {
+    x: number
+    y: number
+  }
+}
 
 export type GameState = {
-  count: number
+  isLoaded: boolean
+  players: {
+    [key: string]: PlayerData
+  }
+}
+
+export const emptyGameState: GameState = {
+  isLoaded: false,
+  players: {},
 }
 
 type GameActions = {
-  increment: (params: { amount: number }) => void
+  move: (params: { direction: Direction }) => void
 }
 
 declare global {
   const Rune: RuneClient<GameState, GameActions>
 }
 
-export function getCount(game: GameState) {
-  return game.count
-}
-
 Rune.initLogic({
   minPlayers: 1,
   maxPlayers: 4,
-  setup: (): GameState => {
-    return { count: 0 }
+  setup: (allPlayerIds): GameState => {
+    const players: {
+      [key: string]: PlayerData
+    } = {}
+
+    for (const playerId of allPlayerIds) {
+      players[playerId] = {
+        position: {
+          x: 0,
+          y: 0,
+        },
+      }
+    }
+
+    return {
+      isLoaded: true,
+      players,
+    }
   },
   actions: {
-    increment: ({ amount }, { game }) => {
-      game.count += amount
+    move: ({ direction }, { game, playerId }) => {
+      const x = game.players[playerId].position.x
+      const y = game.players[playerId].position.y
+
+      const isOutOfBounds =
+        (direction === "top" && y <= 0) ||
+        (direction === "bottom" && y >= MAZE_SIZE - 1) ||
+        (direction === "left" && x <= 0) ||
+        (direction === "right" && x >= MAZE_SIZE - 1)
+
+      if (isOutOfBounds) {
+        throw Rune.invalidAction()
+      }
+
+      switch (direction) {
+        case "top":
+          game.players[playerId].position.y -= 1
+          break
+        case "bottom":
+          game.players[playerId].position.y += 1
+          break
+        case "left":
+          game.players[playerId].position.x -= 1
+          break
+        case "right":
+          game.players[playerId].position.x += 1
+      }
     },
   },
 })

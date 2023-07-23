@@ -5,9 +5,7 @@ import { UIBouncerDialog } from "./ui/UIBouncerDialog"
 import { UICheckbox } from "./ui/UICheckbox"
 import { UIMove } from "./ui/UIMove"
 
-type GameInformationProps = Record<string, never>
-
-export const GameInformation = ({}: GameInformationProps) => {
+export const GameInformation = () => {
   return (
     <Root>
       <FindContainer>

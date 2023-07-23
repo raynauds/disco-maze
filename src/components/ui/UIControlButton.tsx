@@ -1,12 +1,15 @@
 import { styled } from "styled-components"
 
-type UIControlButtonProps = { className?: string }
-
-export const UIControlButton = ({ className }: UIControlButtonProps) => {
-  return <Root className={className}></Root>
+type UIControlButtonProps = {
+  onClick: () => void
+  className?: string
 }
 
-const Root = styled.div`
+export const UIControlButton = ({ onClick, className }: UIControlButtonProps) => {
+  return <Root onClick={onClick} className={className}></Root>
+}
+
+const Root = styled.button`
   width: 48px;
   height: 48px;
   background-color: lightgray;

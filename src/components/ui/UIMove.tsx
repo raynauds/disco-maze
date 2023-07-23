@@ -7,12 +7,12 @@ type UIMoveProps = {
 }
 
 export const UIMove = ({ size }: UIMoveProps) => {
-  return <Root size={size}></Root>
+  return <Root $size={size}></Root>
 }
 
-const Root = styled.div<{ size: UIMoveSize }>`
-  width: ${(props) => moveSizes[props.size]}px;
-  height: ${(props) => moveSizes[props.size]}px;
+const Root = styled.div<{ $size: UIMoveSize }>`
+  width: ${(props) => moveSizes[props.$size]}px;
+  height: ${(props) => moveSizes[props.$size]}px;
   background-color: lightgray;
   border-radius: 4px;
 `

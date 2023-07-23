@@ -1,8 +1,6 @@
 import { styled } from "styled-components"
 
-type MazeCellProps = Record<string, never>
-
-export const MazeCell = ({}: MazeCellProps) => {
+export const MazeCell = () => {
   return <Root></Root>
 }
 

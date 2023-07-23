@@ -1,8 +1,6 @@
 import { styled } from "styled-components"
 
-type UICheckboxProps = Record<string, never>
-
-export const UICheckbox = ({}: UICheckboxProps) => {
+export const UICheckbox = () => {
   return <Root></Root>
 }
 

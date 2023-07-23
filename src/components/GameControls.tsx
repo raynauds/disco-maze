@@ -1,15 +1,19 @@
 import { styled } from "styled-components"
+import { Direction } from "../rune/logic"
 import { UIControlButton } from "./ui/UIControlButton"
 
-type GameControlsProps = Record<string, never>
+export const GameControls = () => {
+  const move = (direction: Direction) => {
+    // TODO!: check if move is valid before dispatching
+    Rune.actions.move({ direction })
+  }
 
-export const GameControls = ({}: GameControlsProps) => {
   return (
     <Root>
-      <UIControlButtonLeft />
-      <UIControlButtonRight />
-      <UIControlButtonTop />
-      <UIControlButtonBottom />
+      <UIControlButtonLeft onClick={() => move("left")} />
+      <UIControlButtonRight onClick={() => move("right")} />
+      <UIControlButtonTop onClick={() => move("top")} />
+      <UIControlButtonBottom onClick={() => move("bottom")} />
     </Root>
   )
 }
