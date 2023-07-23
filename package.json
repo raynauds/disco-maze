@@ -13,6 +13,7 @@
     "@react-spring/web": "^9.7.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "rune-games-sdk": "^4.11.0",
     "styled-components": "^6.0.5"
   },
   "devDependencies": {
@@ -29,6 +30,7 @@
     "eslint-plugin-react-refresh": "^0.4.3",
     "prettier": "^3.0.0",
     "typescript": "^5.0.2",
-    "vite": "^4.4.5"
+    "vite": "^4.4.5",
+    "vite-plugin-rune": "^0.1.1"
   }
 }
