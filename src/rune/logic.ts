@@ -4,6 +4,7 @@ import { MAZE_SIZE } from "../utils.ts/misc.utils"
 export type Direction = "top" | "bottom" | "left" | "right"
 
 export type PlayerData = {
+  order: number // the order of the players (1, 2, 3, or 4)
   position: {
     x: number
     y: number
@@ -38,13 +39,16 @@ Rune.initLogic({
       [key: string]: PlayerData
     } = {}
 
+    let order = 1
     for (const playerId of allPlayerIds) {
       players[playerId] = {
+        order,
         position: {
           x: 0,
           y: 0,
         },
       }
+      order = order + 1
     }
 
     return {
@@ -80,6 +84,25 @@ Rune.initLogic({
         case "right":
           game.players[playerId].position.x += 1
       }
+    },
+  },
+  events: {
+    playerJoined: (playerId, { game }) => {
+      const possibleOrders = [1, 2, 3, 4]
+      for (const playerId of Object.keys(game.players)) {
+        const order = game.players[playerId].order
+        possibleOrders.splice(possibleOrders.indexOf(order), 1)
+      }
+      game.players[playerId] = {
+        order: possibleOrders[0],
+        position: {
+          x: 0,
+          y: 0,
+        },
+      }
+    },
+    playerLeft: (playerId, { game }) => {
+      delete game.players[playerId]
     },
   },
 })

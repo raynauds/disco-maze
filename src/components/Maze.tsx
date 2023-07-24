@@ -1,6 +1,6 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { styled } from "styled-components"
-import { useGame, useYourPlayerId } from "../stores/game.store"
+import { useGame } from "../stores/game.store"
 import { createArray } from "../utils.ts/array.utils"
 import { MAZE_SIZE } from "../utils.ts/misc.utils"
 import { Dancer } from "./ui/Dancer"
@@ -10,12 +10,19 @@ export const Maze = () => {
   const cellsContainerRef = useRef<HTMLDivElement>(null) // TODO?: use a global variable to determine the size of a cell?
   const [cellsContainerSize, setCellsContainerSize] = useState(0)
   const game = useGame()
-  const yourPlayerId = useYourPlayerId()
 
   useEffect(() => {
     if (!cellsContainerRef.current) return
-    const { width, height } = cellsContainerRef.current.getBoundingClientRect()
-    setCellsContainerSize(Math.min(width, height))
+
+    const onResize = () => {
+      if (!cellsContainerRef.current) return
+      const { width, height } = cellsContainerRef.current.getBoundingClientRect()
+      setCellsContainerSize(Math.min(width, height))
+      console.log("resize")
+    }
+
+    cellsContainerRef.current.addEventListener("resize", onResize) // TODO!: fix (not working)
+    onResize()
   }, [])
 
   const cells = createArray(MAZE_SIZE * MAZE_SIZE).map((_, index) => ({
@@ -23,11 +30,19 @@ export const Maze = () => {
   }))
 
   const cellSize = cellsContainerSize / MAZE_SIZE
-  const position = yourPlayerId ? game.players[yourPlayerId]?.position : undefined
-  const xAbsolute = position ? position?.x * cellSize : undefined
-  const yAbsolute = position ? position?.y * cellSize : undefined
 
-  console.log("Maze", JSON.stringify(game, null, 2))
+  const dancers = useMemo(() => {
+    return Object.keys(game.players).map((playerId) => {
+      const player = game.players[playerId]
+      const xAbsolute = player.position.x * cellSize
+      const yAbsolute = player.position.y * cellSize
+      return {
+        playerId,
+        xAbsolute,
+        yAbsolute,
+      }
+    })
+  }, [cellSize, game.players])
 
   return (
     <Root>
@@ -37,11 +52,18 @@ export const Maze = () => {
         })}
       </CellsContainer>
 
-      {typeof xAbsolute === "number" && typeof yAbsolute === "number" ? (
-        <DancerContainer $size={cellSize} $xAbsolute={xAbsolute} $yAbsolute={yAbsolute}>
-          <Dancer />
-        </DancerContainer>
-      ) : null}
+      {dancers.map((dancer) => {
+        return (
+          <DancerContainer
+            key={dancer.playerId}
+            $size={cellSize}
+            $xAbsolute={dancer.xAbsolute}
+            $yAbsolute={dancer.yAbsolute}
+          >
+            <Dancer playerId={dancer.playerId} />
+          </DancerContainer>
+        )
+      })}
     </Root>
   )
 }
