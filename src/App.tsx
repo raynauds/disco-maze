@@ -1,11 +1,13 @@
 import { useEffect } from "react"
 
 import { HomeScreen } from "./components/screens/HomeScreen"
+import { useResponsive } from "./stores/dimensions.store"
 import { useGame, useSetGameState } from "./stores/game.store"
 
 function App() {
   const game = useGame()
   const setGame = useSetGameState()
+  useResponsive()
 
   useEffect(() => {
     Rune.initClient({

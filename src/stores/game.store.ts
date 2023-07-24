@@ -2,7 +2,7 @@ import { Players } from "rune-games-sdk/multiplayer"
 import { create } from "zustand"
 import { GameState, emptyGameState } from "../rune/logic"
 
-interface GameStoreState {
+type GameStoreState = {
   game: GameState
   players: Players
   yourPlayerId: string | undefined
