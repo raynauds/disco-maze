@@ -1,4 +1,5 @@
 import type { RuneClient } from "rune-games-sdk/multiplayer"
+import { createArray } from "../utils.ts/array.utils"
 import { MAZE_SIZE } from "../utils.ts/misc.utils"
 
 export type Direction = "top" | "bottom" | "left" | "right"
@@ -40,12 +41,17 @@ Rune.initLogic({
     } = {}
 
     let order = 1
+    const positionsBucket = createArray(MAZE_SIZE).map((_, i) => i)
     for (const playerId of allPlayerIds) {
+      const xIndex = Math.floor(Math.random() * positionsBucket.length)
+      const x = positionsBucket.splice(xIndex, 1)[0]
+      const yIndex = Math.floor(Math.random() * positionsBucket.length)
+      const y = positionsBucket.splice(yIndex, 1)[0]
       players[playerId] = {
         order,
         position: {
-          x: 0,
-          y: 0,
+          x,
+          y,
         },
       }
       order = order + 1
@@ -95,10 +101,7 @@ Rune.initLogic({
       }
       game.players[playerId] = {
         order: possibleOrders[0],
-        position: {
-          x: 0,
-          y: 0,
-        },
+        position: getRandomPosition(game),
       }
     },
     playerLeft: (playerId, { game }) => {
@@ -106,3 +109,26 @@ Rune.initLogic({
     },
   },
 })
+
+const checkIfPositionIsTaken = (game: GameState, x: number, y: number) => {
+  return Object.values(game.players).some((player) => {
+    return player.position.x === x && player.position.y === y
+  })
+}
+
+const getRandomPosition = (game: GameState) => {
+  let x = Math.floor(Math.random() * MAZE_SIZE)
+  let y = Math.floor(Math.random() * MAZE_SIZE)
+  let isPositionTaken = checkIfPositionIsTaken(game, x, y)
+
+  let iterations = 0
+  const maxIterations = MAZE_SIZE * MAZE_SIZE
+  while (isPositionTaken && iterations < maxIterations) {
+    y = x >= MAZE_SIZE - 1 ? y + 1 : y
+    x = (x + 1) % MAZE_SIZE
+    isPositionTaken = checkIfPositionIsTaken(game, x, y)
+    iterations = iterations + 1
+  }
+
+  return { x, y }
+}
