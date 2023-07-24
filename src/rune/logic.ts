@@ -12,16 +12,25 @@ export type PlayerData = {
   }
 }
 
+export type Cell = {
+  top: boolean
+  bottom: boolean
+  left: boolean
+  right: boolean
+}
+
 export type GameState = {
   isLoaded: boolean
   players: {
     [key: string]: PlayerData
   }
+  maze: Cell[][]
 }
 
 export const emptyGameState: GameState = {
   isLoaded: false,
   players: {},
+  maze: [],
 }
 
 type GameActions = {
@@ -30,6 +39,22 @@ type GameActions = {
 
 declare global {
   const Rune: RuneClient<GameState, GameActions>
+}
+
+const generateMaze = () => {
+  const cells = createArray(MAZE_SIZE).map(() => {
+    return createArray(MAZE_SIZE).map(() => {
+      const cell: Cell = {
+        top: true,
+        bottom: true,
+        left: true,
+        right: true,
+      }
+      return cell
+    })
+  })
+
+  return cells
 }
 
 Rune.initLogic({
@@ -60,6 +85,7 @@ Rune.initLogic({
     return {
       isLoaded: true,
       players,
+      maze: generateMaze(),
     }
   },
   actions: {

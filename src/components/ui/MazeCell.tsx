@@ -1,14 +1,24 @@
 import { styled } from "styled-components"
+import { Cell } from "../../rune/logic"
 
-export const MazeCell = () => {
-  return <Root></Root>
+type MazeCellProps = {
+  cell: Cell
 }
 
-const Root = styled.div`
-  border-style: dashed;
+export const MazeCell = ({ cell }: MazeCellProps) => {
+  return <Root $top={cell.top} $right={cell.right} $bottom={cell.bottom} $left={cell.left}></Root>
+}
+
+const Root = styled.div<{
+  $top: boolean
+  $right: boolean
+  $bottom: boolean
+  $left: boolean
+}>`
+  border-style: solid;
   border-color: lightgrey;
-  border-left-width: 1px;
-  border-right-width: 1px;
-  border-top-width: 1px;
-  border-bottom-width: 1px;
+  border-left-width: ${(props) => (props.$top ? "1px" : 0)};
+  border-right-width: ${(props) => (props.$right ? "1px" : 0)};
+  border-top-width: ${(props) => (props.$bottom ? "1px" : 0)};
+  border-bottom-width: ${(props) => (props.$left ? "1px" : 0)};
 `

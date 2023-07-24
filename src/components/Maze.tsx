@@ -2,7 +2,6 @@ import { useMemo } from "react"
 import { styled } from "styled-components"
 import { MAZE_HORIZONTAL_MARGIN_PX, useDimensions } from "../stores/dimensions.store"
 import { useGame } from "../stores/game.store"
-import { createArray } from "../utils.ts/array.utils"
 import { MAZE_SIZE } from "../utils.ts/misc.utils"
 import { Dancer } from "./ui/Dancer"
 import { MazeCell } from "./ui/MazeCell"
@@ -10,9 +9,8 @@ import { MazeCell } from "./ui/MazeCell"
 export const Maze = () => {
   const { availableWidth, cellWidth } = useDimensions()
   const game = useGame()
-  const cells = createArray(MAZE_SIZE * MAZE_SIZE).map((_, index) => ({
-    id: index,
-  }))
+
+  const cells = game.maze.flat()
 
   const dancers = useMemo(() => {
     return Object.keys(game.players).map((playerId) => {
@@ -31,8 +29,8 @@ export const Maze = () => {
     <Root>
       <MazeArea $width={availableWidth}>
         <CellsContainer>
-          {cells.map((cell) => {
-            return <MazeCell key={cell.id} />
+          {cells.map((cell, index) => {
+            return <MazeCell key={index} cell={cell} />
           })}
         </CellsContainer>
 
@@ -74,7 +72,7 @@ const CellsContainer = styled.div`
   grid-template-rows: repeat(${MAZE_SIZE}, 1fr);
   width: 100%;
   height: 100%;
-  border: 1px dashed lightgrey;
+  border: 1px solid lightgrey;
 `
 
 const DancerContainer = styled.div<{ $size: number; $xAbsolute: number; $yAbsolute: number }>`
