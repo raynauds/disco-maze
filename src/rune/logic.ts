@@ -154,6 +154,48 @@ const getRandomPosition = (game: GameState) => {
   return { x, y }
 }
 
+export const checkIfCanMove = ({
+  game,
+  playerId,
+  direction,
+}: {
+  game: GameState
+  playerId: string
+  direction: Direction
+}) => {
+  const player = game.players[playerId]
+  if (!player) {
+    return false
+  }
+  const x = player.position.x
+  const y = player.position.y
+
+  const isOutOfBounds =
+    (direction === "top" && y <= 0) ||
+    (direction === "bottom" && y >= MAZE_SIZE - 1) ||
+    (direction === "left" && x <= 0) ||
+    (direction === "right" && x >= MAZE_SIZE - 1)
+  if (isOutOfBounds) {
+    return false
+  }
+
+  const cell = game.maze[y][x]
+  if (!cell) {
+    return false
+  }
+
+  switch (direction) {
+    case "top":
+      return !cell.top
+    case "bottom":
+      return !cell.bottom
+    case "left":
+      return !cell.left
+    case "right":
+      return !cell.right
+  }
+}
+
 /**
  * RUNE LOGIC
  */
@@ -190,16 +232,13 @@ Rune.initLogic({
   },
   actions: {
     move: ({ direction }, { game, playerId }) => {
-      const x = game.players[playerId].position.x
-      const y = game.players[playerId].position.y
+      const player = game.players[playerId]
+      if (!player) {
+        throw Rune.invalidAction()
+      }
 
-      const isOutOfBounds =
-        (direction === "top" && y <= 0) ||
-        (direction === "bottom" && y >= MAZE_SIZE - 1) ||
-        (direction === "left" && x <= 0) ||
-        (direction === "right" && x >= MAZE_SIZE - 1)
-
-      if (isOutOfBounds) {
+      const canMove = checkIfCanMove({ game, playerId, direction })
+      if (!canMove) {
         throw Rune.invalidAction()
       }
 

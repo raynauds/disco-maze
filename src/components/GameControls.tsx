@@ -1,10 +1,22 @@
 import { styled } from "styled-components"
-import { Direction } from "../rune/logic"
+import { Direction, checkIfCanMove } from "../rune/logic"
+import { useGame, useYourPlayerId } from "../stores/game.store"
 import { UIControlButton } from "./ui/UIControlButton"
 
 export const GameControls = () => {
+  const game = useGame()
+  const yourPlayerId = useYourPlayerId()
+
   const move = (direction: Direction) => {
-    // TODO!: check if move is valid before dispatching
+    if (!yourPlayerId) {
+      return
+    }
+
+    const canMove = checkIfCanMove({ game, playerId: yourPlayerId, direction })
+    if (!canMove) {
+      return // TODO: display failing move
+    }
+
     Rune.actions.move({ direction })
   }
 
