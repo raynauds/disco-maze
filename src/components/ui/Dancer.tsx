@@ -2,7 +2,7 @@ import { styled } from "styled-components"
 import { useDimensions } from "../../stores/dimensions.store"
 import { useGame } from "../../stores/game.store"
 
-const colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFF00"]
+const colors = ["#FF5599", "#ccFF33", "#aaddFF", "#FFcc66"]
 const defaultColor = "#000000"
 
 type DancerProps = {

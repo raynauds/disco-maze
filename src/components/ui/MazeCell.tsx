@@ -3,10 +3,13 @@ import { Cell } from "../../rune/logic"
 
 type MazeCellProps = {
   cell: Cell
+  isVisible: boolean
 }
 
-export const MazeCell = ({ cell }: MazeCellProps) => {
-  return <Root $top={cell.top} $right={cell.right} $bottom={cell.bottom} $left={cell.left}></Root>
+export const MazeCell = ({ cell, isVisible }: MazeCellProps) => {
+  return (
+    <Root $top={cell.top} $right={cell.right} $bottom={cell.bottom} $left={cell.left} $isVisible={isVisible}></Root>
+  )
 }
 
 const Root = styled.div<{
@@ -14,6 +17,7 @@ const Root = styled.div<{
   $right: boolean
   $bottom: boolean
   $left: boolean
+  $isVisible: boolean
 }>`
   border-style: solid;
   border-color: lightgrey;
@@ -21,4 +25,5 @@ const Root = styled.div<{
   border-right-width: ${(props) => (props.$right ? "1px" : 0)};
   border-bottom-width: ${(props) => (props.$bottom ? "1px" : 0)};
   border-left-width: ${(props) => (props.$left ? "1px" : 0)};
+  background-color: ${(props) => (props.$isVisible ? "transparent" : "rgba(0, 0, 0, 0.3)")};
 `

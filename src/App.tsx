@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 
 import { HomeScreen } from "./components/screens/HomeScreen"
+import { LoadingScreen } from "./components/screens/LoadingScreen"
 import { useResponsive } from "./stores/dimensions.store"
 import { useGame, useSetGameState } from "./stores/game.store"
 
@@ -18,7 +19,7 @@ function App() {
   }, [setGame])
 
   if (!game?.isLoaded) {
-    return <div>Loading...</div>
+    return <LoadingScreen />
   }
 
   return <HomeScreen />

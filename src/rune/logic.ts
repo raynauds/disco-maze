@@ -222,8 +222,62 @@ export const checkIfCanMove = ({
   return true
 }
 
-export const getVisibleCells = ({ game, x, y }: { game: GameState; observerPosition: { x: number; y: number } }) => {
-  //
+export const getVisibleCells = ({
+  game,
+  observerPosition,
+}: {
+  game: GameState
+  observerPosition: { x: number; y: number }
+}) => {
+  const { x, y } = observerPosition
+  const visibleCells: Array<{ x: number; y: number }> = [{ x, y }]
+
+  for (let i = 1; i < MAZE_SIZE; i++) {
+    if (y - i < 0) {
+      break
+    }
+    const topCell = game.maze[y - i][x]
+    if (!topCell.bottom) {
+      visibleCells.push({ x, y: y - i })
+    } else {
+      break
+    }
+  }
+  for (let i = 1; i < MAZE_SIZE; i++) {
+    if (x + i >= MAZE_SIZE) {
+      break
+    }
+    const rightCell = game.maze[y][x + i]
+    if (!rightCell.left) {
+      visibleCells.push({ x: x + i, y })
+    } else {
+      break
+    }
+  }
+  for (let i = 1; i < MAZE_SIZE; i++) {
+    if (y + i >= MAZE_SIZE) {
+      break
+    }
+    const bottomCell = game.maze[y + i][x]
+    if (!bottomCell.top) {
+      visibleCells.push({ x, y: y + i })
+    } else {
+      break
+    }
+  }
+  for (let i = 1; i < MAZE_SIZE; i++) {
+    if (x - i < 0) {
+      break
+    }
+    const leftCell = game.maze[y][x - i]
+    if (!leftCell.right) {
+      visibleCells.push({ x: x - i, y })
+    } else {
+      break
+    }
+  }
+
+  return visibleCells
 }
 
 /**
