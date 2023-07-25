@@ -167,14 +167,16 @@ export const checkIfCanMove = ({
   if (!player) {
     return false
   }
+
   const x = player.position.x
   const y = player.position.y
+  const targetPosition = {
+    x: direction === "left" ? x - 1 : direction === "right" ? x + 1 : x,
+    y: direction === "top" ? y - 1 : direction === "bottom" ? y + 1 : y,
+  }
 
   const isOutOfBounds =
-    (direction === "top" && y <= 0) ||
-    (direction === "bottom" && y >= MAZE_SIZE - 1) ||
-    (direction === "left" && x <= 0) ||
-    (direction === "right" && x >= MAZE_SIZE - 1)
+    targetPosition.x < 0 || targetPosition.x >= MAZE_SIZE || targetPosition.y < 0 || targetPosition.y >= MAZE_SIZE
   if (isOutOfBounds) {
     return false
   }
@@ -183,17 +185,41 @@ export const checkIfCanMove = ({
   if (!cell) {
     return false
   }
-
   switch (direction) {
     case "top":
-      return !cell.top
+      if (cell.top) {
+        return false
+      }
+      break
     case "bottom":
-      return !cell.bottom
+      if (cell.bottom) {
+        return false
+      }
+      break
     case "left":
-      return !cell.left
+      if (cell.left) {
+        return false
+      }
+      break
     case "right":
-      return !cell.right
+      if (cell.right) {
+        return false
+      }
   }
+
+  const otherPlayers = Object.keys(game.players).filter((otherPlayerId) => {
+    const otherPlayer = game.players[otherPlayerId]
+    return !!otherPlayer && playerId !== otherPlayerId
+  })
+  const isOtherPlayerOnTargetPosition = otherPlayers.some((otherPlayerId) => {
+    const otherPlayer = game.players[otherPlayerId]
+    return !!otherPlayer && otherPlayer.position.x === targetPosition.x && otherPlayer.position.y === targetPosition.y
+  })
+  if (isOtherPlayerOnTargetPosition) {
+    return false
+  }
+
+  return true
 }
 
 /**
