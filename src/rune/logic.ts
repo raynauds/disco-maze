@@ -222,6 +222,10 @@ export const checkIfCanMove = ({
   return true
 }
 
+export const getVisibleCells = ({ game, x, y }: { game: GameState; observerPosition: { x: number; y: number } }) => {
+  //
+}
+
 /**
  * RUNE LOGIC
  */
