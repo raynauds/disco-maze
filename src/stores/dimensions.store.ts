@@ -2,7 +2,7 @@ import { create } from "zustand"
 
 import { useEffect } from "react"
 import { shallow } from "zustand/shallow"
-import { MAZE_SIZE } from "../utils.ts/misc.utils"
+import { MAZE_SIZE } from "../rune/logic"
 
 export const MAZE_HORIZONTAL_MARGIN_PX = 8
 export const MAX_ASPECT_RATIO = 560 / 880

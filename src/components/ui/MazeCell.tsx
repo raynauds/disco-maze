@@ -17,8 +17,8 @@ const Root = styled.div<{
 }>`
   border-style: solid;
   border-color: lightgrey;
-  border-left-width: ${(props) => (props.$top ? "1px" : 0)};
+  border-top-width: ${(props) => (props.$top ? "1px" : 0)};
   border-right-width: ${(props) => (props.$right ? "1px" : 0)};
-  border-top-width: ${(props) => (props.$bottom ? "1px" : 0)};
-  border-bottom-width: ${(props) => (props.$left ? "1px" : 0)};
+  border-bottom-width: ${(props) => (props.$bottom ? "1px" : 0)};
+  border-left-width: ${(props) => (props.$left ? "1px" : 0)};
 `

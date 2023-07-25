@@ -1,8 +1,8 @@
 import { useMemo } from "react"
 import { styled } from "styled-components"
+import { MAZE_SIZE } from "../rune/logic"
 import { MAZE_HORIZONTAL_MARGIN_PX, useDimensions } from "../stores/dimensions.store"
 import { useGame } from "../stores/game.store"
-import { MAZE_SIZE } from "../utils.ts/misc.utils"
 import { Dancer } from "./ui/Dancer"
 import { MazeCell } from "./ui/MazeCell"
 
@@ -77,8 +77,8 @@ const CellsContainer = styled.div`
 
 const DancerContainer = styled.div<{ $size: number; $xAbsolute: number; $yAbsolute: number }>`
   position: absolute;
-  left: ${(props) => props.$xAbsolute}px;
   top: ${(props) => props.$yAbsolute}px;
+  left: ${(props) => props.$xAbsolute}px;
   display: flex;
   justify-content: center;
   align-items: center;
