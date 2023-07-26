@@ -1,5 +1,5 @@
+// WARNING!: All Rune logic must be self-contained, no imports allowed
 import type { RuneClient } from "rune-games-sdk/multiplayer"
-import { createArray } from "../utils.ts/array.utils"
 
 /**
  * TYPES
@@ -8,10 +8,7 @@ export type Direction = "top" | "right" | "bottom" | "left"
 
 export type PlayerData = {
   order: number // the order of the players (1, 2, 3, or 4)
-  position: {
-    x: number
-    y: number
-  }
+  position: Position
 }
 
 export type Cell = {
@@ -21,12 +18,28 @@ export type Cell = {
   left: boolean
 }
 
+export type Position = {
+  x: number
+  y: number
+}
+
+const moves = ["the-hustle"] as const // TODO!: add more moves & display move in maze
+
+export type Move = (typeof moves)[number]
+
 export type GameState = {
   isLoaded: boolean
+  maze: Cell[][]
   players: {
     [key: string]: PlayerData
   }
-  maze: Cell[][]
+  bouncer?: {
+    position: Position
+    movesRequired: Move[]
+  }
+  door?: {
+    position: Position
+  }
 }
 
 type GameActions = {
@@ -44,12 +57,24 @@ export const MAZE_SIZE = 9
 
 export const emptyGameState: GameState = {
   isLoaded: false,
-  players: {},
   maze: [],
+  players: {},
+  bouncer: {
+    position: {
+      x: 0,
+      y: 0,
+    },
+    movesRequired: [],
+  },
 }
 
 /**
- * FUNCTIONS
+ * MISC UTILS
+ */
+export const createArray = (length: number) => Array.from({ length }, (_, i) => i)
+
+/**
+ * GAME FUNCTIONS
  */
 // Randomized depth-first search - Iterative implementation with stack (thanks @thecodingtrain)
 const generateMaze = () => {
@@ -65,9 +90,9 @@ const generateMaze = () => {
     })
   })
 
-  const getCellKey = ({ x, y }: { x: number; y: number }) => `${x},${y}`
+  const getCellKey = ({ x, y }: Position) => `${x},${y}`
   const visitedCells: { [key: string]: boolean } = {}
-  const stack: { x: number; y: number }[] = []
+  const stack: Position[] = []
   const startingCell = {
     x: Math.floor(Math.random() * MAZE_SIZE),
     y: Math.floor(Math.random() * MAZE_SIZE),
@@ -85,7 +110,7 @@ const generateMaze = () => {
 
     visitedCells[getCellKey(cell)] = true
 
-    const neighbors: { x: number; y: number }[] = [
+    const neighbors: Position[] = [
       { x: cell.x, y: cell.y - 1 },
       { x: cell.x, y: cell.y + 1 },
       { x: cell.x - 1, y: cell.y },
@@ -131,23 +156,23 @@ const generateMaze = () => {
   return cells
 }
 
-const checkIfPositionIsTaken = (game: GameState, x: number, y: number) => {
+const checkIfPositionIsTaken = (game: GameState, position: Position) => {
   return Object.values(game.players).some((player) => {
-    return player.position.x === x && player.position.y === y
+    return player.position.x === position.x && player.position.y === position.y
   })
 }
 
 const getRandomPosition = (game: GameState) => {
   let x = Math.floor(Math.random() * MAZE_SIZE)
   let y = Math.floor(Math.random() * MAZE_SIZE)
-  let isPositionTaken = checkIfPositionIsTaken(game, x, y)
+  let isPositionTaken = checkIfPositionIsTaken(game, { x, y })
 
   let iterations = 0
   const maxIterations = MAZE_SIZE * MAZE_SIZE
   while (isPositionTaken && iterations < maxIterations) {
     y = x >= MAZE_SIZE - 1 ? y + 1 : y
     x = (x + 1) % MAZE_SIZE
-    isPositionTaken = checkIfPositionIsTaken(game, x, y)
+    isPositionTaken = checkIfPositionIsTaken(game, { x, y })
     iterations = iterations + 1
   }
 
@@ -222,15 +247,9 @@ export const checkIfCanMove = ({
   return true
 }
 
-export const getVisibleCells = ({
-  game,
-  observerPosition,
-}: {
-  game: GameState
-  observerPosition: { x: number; y: number }
-}) => {
+export const getVisibleCells = ({ game, observerPosition }: { game: GameState; observerPosition: Position }) => {
   const { x, y } = observerPosition
-  const visibleCells: Array<{ x: number; y: number }> = [{ x, y }]
+  const visibleCells: Array<Position> = [{ x, y }]
 
   for (let i = 1; i < MAZE_SIZE; i++) {
     if (y - i < 0) {
@@ -291,19 +310,21 @@ Rune.initLogic({
       [key: string]: PlayerData
     } = {}
 
+    const positionsBucket = createArray(MAZE_SIZE)
+      .map((_, i) => {
+        return createArray(MAZE_SIZE).map((_, j) => {
+          return { x: j, y: i }
+        })
+      })
+      .flat()
+
     let order = 1
-    const positionsBucket = createArray(MAZE_SIZE).map((_, i) => i)
     for (const playerId of allPlayerIds) {
-      const xIndex = Math.floor(Math.random() * positionsBucket.length)
-      const x = positionsBucket.splice(xIndex, 1)[0]
-      const yIndex = Math.floor(Math.random() * positionsBucket.length)
-      const y = positionsBucket.splice(yIndex, 1)[0]
+      const randomPositionIndex = Math.floor(Math.random() * positionsBucket.length)
+      const randomPosition = positionsBucket.splice(randomPositionIndex, 1)[0]
       players[playerId] = {
         order,
-        position: {
-          x,
-          y,
-        },
+        position: randomPosition,
       }
       order = order + 1
     }
@@ -312,6 +333,15 @@ Rune.initLogic({
       isLoaded: true,
       players,
       maze: generateMaze(),
+      bouncer: {
+        // TODO!: initialize bouncer & add collision
+        position: { x: 0, y: 1 },
+        movesRequired: [],
+      },
+      door: {
+        // TODO!: initialize door & add collision
+        position: { x: 0, y: 0 },
+      },
     }
   },
   actions: {

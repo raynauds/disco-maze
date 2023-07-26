@@ -1,6 +1,6 @@
 import { styled } from "styled-components"
-import { theme } from "../../theme/theme"
-import { UIMove } from "./UIMove"
+import { theme } from "../theme/theme"
+import { UIMove } from "./ui/UIMove"
 
 export const MovesInventory = () => {
   return (

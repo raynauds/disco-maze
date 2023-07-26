@@ -3,9 +3,10 @@ import { styled } from "styled-components"
 import { MAZE_SIZE, getVisibleCells } from "../rune/logic"
 import { MAZE_HORIZONTAL_MARGIN_PX, useDimensions } from "../stores/dimensions.store"
 import { useGame, useYourPlayerId } from "../stores/game.store"
-import { log } from "../utils.ts/debug.utils"
-import { Dancer } from "./ui/Dancer"
-import { MazeCell } from "./ui/MazeCell"
+import { UIBouncer } from "./ui/UIBouncer"
+import { UIDancer } from "./ui/UIDancer"
+import { UIDoor } from "./ui/UIDoor"
+import { UIMazeCell } from "./ui/UIMazeCell"
 
 export const Maze = () => {
   const { availableWidth, cellWidth } = useDimensions()
@@ -38,29 +39,49 @@ export const Maze = () => {
       observerPosition: player.position,
     })
   }, [game, yourPlayerId])
-  log(visibleCells.sort((a, b) => a.x - b.x || a.y - b.y))
+
   return (
     <Root>
       <MazeArea $width={availableWidth}>
         {dancers.map((dancer) => {
           return (
-            <DancerContainer
+            <ElementContainer
               key={dancer.playerId}
               $size={cellWidth}
               $xAbsolute={dancer.xAbsolute}
               $yAbsolute={dancer.yAbsolute}
             >
-              <Dancer playerId={dancer.playerId} />
-            </DancerContainer>
+              <UIDancer playerId={dancer.playerId} />
+            </ElementContainer>
           )
         })}
+
+        {game.bouncer ? (
+          <ElementContainer
+            $size={cellWidth}
+            $xAbsolute={game.bouncer.position.x * cellWidth}
+            $yAbsolute={game.bouncer.position.y * cellWidth}
+          >
+            <UIBouncer />
+          </ElementContainer>
+        ) : null}
+
+        {game.door ? (
+          <ElementContainer
+            $size={cellWidth}
+            $xAbsolute={game.door.position.x * cellWidth}
+            $yAbsolute={game.door.position.y * cellWidth}
+          >
+            <UIDoor />
+          </ElementContainer>
+        ) : null}
 
         <CellsContainer>
           {cells.map((cell, index) => {
             const x = index % MAZE_SIZE
             const y = Math.floor(index / MAZE_SIZE)
             const isVisible = visibleCells.some((visibleCell) => visibleCell.x === x && visibleCell.y === y)
-            return <MazeCell key={index} cell={cell} isVisible={isVisible} />
+            return <UIMazeCell key={index} cell={cell} isVisible={isVisible} />
           })}
         </CellsContainer>
       </MazeArea>
@@ -83,6 +104,17 @@ const MazeArea = styled.div<{ $width: number }>`
   height: ${(props) => props.$width}px;
 `
 
+const ElementContainer = styled.div<{ $size: number; $xAbsolute: number; $yAbsolute: number }>`
+  position: absolute;
+  top: ${(props) => props.$yAbsolute}px;
+  left: ${(props) => props.$xAbsolute}px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: ${(props) => props.$size}px;
+  height: ${(props) => props.$size}px;
+`
+
 const CellsContainer = styled.div`
   position: absolute;
   top: 0;
@@ -95,15 +127,4 @@ const CellsContainer = styled.div`
   width: 100%;
   height: 100%;
   border: 1px solid lightgrey;
-`
-
-const DancerContainer = styled.div<{ $size: number; $xAbsolute: number; $yAbsolute: number }>`
-  position: absolute;
-  top: ${(props) => props.$yAbsolute}px;
-  left: ${(props) => props.$xAbsolute}px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: ${(props) => props.$size}px;
-  height: ${(props) => props.$size}px;
 `

@@ -5,11 +5,11 @@ import { useGame } from "../../stores/game.store"
 const colors = ["#FF5599", "#ccFF33", "#aaddFF", "#FFcc66"]
 const defaultColor = "#000000"
 
-type DancerProps = {
+type UIDancerProps = {
   playerId: string
 }
 
-export const Dancer = ({ playerId }: DancerProps) => {
+export const UIDancer = ({ playerId }: UIDancerProps) => {
   const { cellWidth } = useDimensions()
   const game = useGame()
   const player = game.players[playerId]

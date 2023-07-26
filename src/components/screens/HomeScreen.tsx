@@ -4,7 +4,7 @@ import { theme } from "../../theme/theme"
 import { GameControls } from "../GameControls"
 import { GameInformation } from "../GameInformation"
 import { Maze } from "../Maze"
-import { MovesInventory } from "../ui/MovesInventory"
+import { MovesInventory } from "../MovesInventory"
 
 export const HomeScreen = () => {
   const { availableWidth } = useDimensions()

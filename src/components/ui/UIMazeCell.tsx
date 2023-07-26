@@ -1,12 +1,12 @@
 import { styled } from "styled-components"
 import { Cell } from "../../rune/logic"
 
-type MazeCellProps = {
+type UIMazeCellProps = {
   cell: Cell
   isVisible: boolean
 }
 
-export const MazeCell = ({ cell, isVisible }: MazeCellProps) => {
+export const UIMazeCell = ({ cell, isVisible }: UIMazeCellProps) => {
   return (
     <Root $top={cell.top} $right={cell.right} $bottom={cell.bottom} $left={cell.left} $isVisible={isVisible}></Root>
   )
