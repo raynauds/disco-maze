@@ -76,7 +76,7 @@ export const Maze = () => {
           </ElementContainer>
         ) : null}
 
-        {game.move ? (
+        {game.move && !game.move.isCollected ? (
           <ElementContainer
             $size={cellWidth}
             $xAbsolute={game.move.position.x * cellWidth}

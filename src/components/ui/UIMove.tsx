@@ -2,7 +2,6 @@ import { useMemo } from "react"
 import { styled } from "styled-components"
 import { Move } from "../../rune/logic"
 import { useDimensions } from "../../stores/dimensions.store"
-import { log } from "../../utils.ts/debug.utils"
 
 type UIMoveSize = "inside-cell" | "medium" | "large"
 
@@ -17,7 +16,6 @@ export const UIMove = ({ id, size }: UIMoveProps) => {
   const sizes: Record<UIMoveSize, number> = useMemo(() => {
     const height = availableWidth / aspectRatio
     const availableSpace = Math.min(height - availableWidth, availableWidth)
-    console.log({ height })
 
     return {
       "inside-cell": 0.6 * cellWidth,
@@ -25,10 +23,6 @@ export const UIMove = ({ id, size }: UIMoveProps) => {
       large: availableSpace * 0.15,
     }
   }, [aspectRatio, availableWidth, cellWidth])
-
-  if (size === "large") {
-    log(aspectRatio, sizes[size])
-  }
 
   return <Root $size={sizes[size]}>{id || ""}</Root>
 }

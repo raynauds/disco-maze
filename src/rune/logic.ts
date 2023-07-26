@@ -74,6 +74,7 @@ declare global {
  * DATA
  *********************************************************************************************************************/
 export const MAZE_SIZE = 9
+export const MOVE_INVENTORY_SIZE = 4
 
 export const emptyGameState: GameState = {
   isLoaded: false,
@@ -430,16 +431,22 @@ Rune.initLogic({
 
       switch (direction) {
         case "top":
-          game.players[playerId].position.y -= 1
+          player.position.y -= 1
           break
         case "bottom":
-          game.players[playerId].position.y += 1
+          player.position.y += 1
           break
         case "left":
-          game.players[playerId].position.x -= 1
+          player.position.x -= 1
           break
         case "right":
-          game.players[playerId].position.x += 1
+          player.position.x += 1
+      }
+
+      const hasFoundMove = !!game.move && arePositionsEqual(player.position, game.move.position)
+      if (!!game.move && hasFoundMove) {
+        game.move.isCollected = true
+        player.moves.push(game.move.id)
       }
     },
   },
