@@ -13,7 +13,7 @@ export const UIBouncerDialog = ({ moves }: UIBouncerDialogProps) => {
   return (
     <Root>
       {moves.map((move) => {
-        return <UIMove key={move.id} id={move.id} size="small" />
+        return <UIMove key={move.id} id={move.id} size="small" isPerformed={move.isPerformed} />
       })}
     </Root>
   )

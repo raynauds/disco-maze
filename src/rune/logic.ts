@@ -58,6 +58,7 @@ export type GameState = {
     position: Position
     movesRequired: MovePerformance[]
     isFound: boolean
+    isSatisfiedWithYourMoves: boolean
   }
   door?: {
     position: Position
@@ -71,6 +72,7 @@ export type GameState = {
 
 type GameActions = {
   move: (params: { direction: Direction }) => void
+  performMove: (params: { move: MoveName }) => void
 }
 
 declare global {
@@ -95,6 +97,7 @@ export const emptyGameState: GameState = {
     },
     movesRequired: [],
     isFound: false,
+    isSatisfiedWithYourMoves: false,
   },
 }
 
@@ -387,6 +390,15 @@ export const MUTATION_WARNING_extractPositionThatDoesNotSeeBouncerOrMove = ({
   return randomPosition
 }
 
+export const checkIfCanPerformMove = ({ player, move }: { player: PlayerData; move: MoveName }) => {
+  const canPerformMove = player.moves.includes(move)
+  if (!canPerformMove) {
+    return false
+  }
+
+  return true
+}
+
 /*********************************************************************************************************************
  * RUNE LOGIC
  *********************************************************************************************************************/
@@ -452,6 +464,7 @@ Rune.initLogic({
       position: bouncerPosition,
       movesRequired: [{ id: moveId, isPerformed: false }],
       isFound: false,
+      isSatisfiedWithYourMoves: false,
     }
 
     const door: GameState["door"] = {
@@ -537,6 +550,43 @@ Rune.initLogic({
         if (playerSeesBouncer) {
           game.bouncer.isFound = true
         }
+      }
+    },
+    performMove: ({ move }, { game, playerId }) => {
+      const player = game.players[playerId]
+      if (!player) {
+        throw Rune.invalidAction()
+      }
+      const canPerformMove = checkIfCanPerformMove({ player, move })
+      if (!canPerformMove) {
+        throw Rune.invalidAction()
+      }
+
+      if (!game.bouncer || !game.bouncer.isFound) {
+        throw Rune.invalidAction()
+      }
+
+      const distanceToBouncer =
+        Math.abs(player.position.x - game.bouncer.position.x) + Math.abs(player.position.y - game.bouncer.position.y)
+      if (distanceToBouncer > 1) {
+        throw Rune.invalidAction()
+      }
+
+      const nextMoveRequired = game.bouncer?.movesRequired.find((moveRequired) => {
+        return !moveRequired.isPerformed
+      })
+      if (!nextMoveRequired || nextMoveRequired.id !== move) {
+        throw Rune.invalidAction()
+      }
+
+      nextMoveRequired.isPerformed = true
+
+      const areAllMovesPerformed = game.bouncer.movesRequired.every((moveRequired) => {
+        return moveRequired.isPerformed
+      })
+      if (areAllMovesPerformed) {
+        game.bouncer.isSatisfiedWithYourMoves = true
+        game.bouncer.position = { x: -1, y: -1 }
       }
     },
   },

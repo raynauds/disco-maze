@@ -8,9 +8,11 @@ type UIMoveSize = "inside-cell" | "small" | "medium" | "large"
 type UIMoveProps = {
   id?: MoveName
   size: UIMoveSize
+  isPerformed?: boolean
+  onClick?: () => void
 }
 
-export const UIMove = ({ id, size }: UIMoveProps) => {
+export const UIMove = ({ id, size, isPerformed, onClick }: UIMoveProps) => {
   const { availableWidth, cellWidth, aspectRatio } = useDimensions()
 
   const sizes: Record<UIMoveSize, number> = useMemo(() => {
@@ -25,12 +27,17 @@ export const UIMove = ({ id, size }: UIMoveProps) => {
     }
   }, [aspectRatio, availableWidth, cellWidth])
 
-  return <Root $size={sizes[size]}>{id || ""}</Root>
+  return (
+    <Root onClick={onClick} $size={sizes[size]} $isPerformed={isPerformed}>
+      {id || ""}
+    </Root>
+  )
 }
 
-const Root = styled.div<{ $size: number }>`
+const Root = styled.button<{ $size: number; $isPerformed?: boolean }>`
   width: ${(props) => props.$size}px;
   height: ${(props) => props.$size}px;
   background-color: lightgray;
   border-radius: 4px;
+  border: ${(props) => (props.$isPerformed ? "2px solid green" : "none")};
 `

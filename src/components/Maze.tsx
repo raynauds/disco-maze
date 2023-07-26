@@ -40,6 +40,8 @@ export const Maze = () => {
     })
   }, [game, yourPlayerId])
 
+  const isBouncerHidden = !!game.bouncer?.isSatisfiedWithYourMoves
+
   return (
     <Root>
       <MazeArea $width={availableWidth - 2 * MAZE_HORIZONTAL_MARGIN_PX}>
@@ -56,7 +58,7 @@ export const Maze = () => {
           )
         })}
 
-        {game.bouncer ? (
+        {game.bouncer && !isBouncerHidden ? (
           <ElementContainer
             $size={cellWidth}
             $xAbsolute={game.bouncer.position.x * cellWidth}

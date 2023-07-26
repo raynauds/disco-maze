@@ -1,5 +1,6 @@
+import { useCallback } from "react"
 import { styled } from "styled-components"
-import { MOVE_INVENTORY_SIZE, createArray } from "../rune/logic"
+import { MOVE_INVENTORY_SIZE, MoveName, checkIfCanPerformMove, createArray } from "../rune/logic"
 import { useGame, useYourPlayerId } from "../stores/game.store"
 import { theme } from "../theme/theme"
 import { UIMove } from "./ui/UIMove"
@@ -11,10 +12,39 @@ export const MovesInventory = () => {
   const player = yourPlayerId ? game.players[yourPlayerId] : undefined
   const moves = player?.moves || []
 
+  const performMove = useCallback(
+    (move: MoveName) => {
+      const player = yourPlayerId ? game.players[yourPlayerId] : undefined
+      if (!player) {
+        return
+      }
+      const canPerformMove = checkIfCanPerformMove({ player, move })
+      if (!canPerformMove) {
+        return
+      }
+      Rune.actions.performMove({ move })
+    },
+    [game, yourPlayerId],
+  )
+
   return (
     <Root>
       {createArray(MOVE_INVENTORY_SIZE).map((_, index) => {
-        return <UIMove key={index} id={moves[index]} size="large" />
+        const move = moves[index]
+        return (
+          <UIMove
+            key={index}
+            id={move}
+            size="large"
+            onClick={
+              move
+                ? () => {
+                    performMove(move)
+                  }
+                : undefined
+            }
+          />
+        )
       })}
     </Root>
   )
