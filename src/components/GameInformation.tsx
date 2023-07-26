@@ -1,4 +1,5 @@
 import { styled } from "styled-components"
+import { useGame } from "../stores/game.store"
 import { theme } from "../theme/theme"
 import { UIBouncerAvatar } from "./ui/UIBouncerAvatar"
 import { UIBouncerDialog } from "./ui/UIBouncerDialog"
@@ -6,6 +7,9 @@ import { UICheckbox } from "./ui/UICheckbox"
 import { UIMove } from "./ui/UIMove"
 
 export const GameInformation = () => {
+  const game = useGame()
+  const moveId = game.move?.isCollected ? game.move.id : undefined
+
   return (
     <Root>
       <FindContainer>
@@ -13,7 +17,7 @@ export const GameInformation = () => {
           <CheckboxContainer>
             <UICheckbox />
           </CheckboxContainer>
-          <UIMove size="medium" />
+          <UIMove id={moveId} size="medium" />
         </FindMoveContainer>
         <FindBouncerContainer>
           <CheckboxContainer>

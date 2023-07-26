@@ -7,6 +7,7 @@ import { UIBouncer } from "./ui/UIBouncer"
 import { UIDancer } from "./ui/UIDancer"
 import { UIDoor } from "./ui/UIDoor"
 import { UIMazeCell } from "./ui/UIMazeCell"
+import { UIMove } from "./ui/UIMove"
 
 export const Maze = () => {
   const { availableWidth, cellWidth } = useDimensions()
@@ -73,6 +74,16 @@ export const Maze = () => {
             $yAbsolute={game.door.position.y * cellWidth}
           >
             <UIDoor />
+          </ElementContainer>
+        ) : null}
+
+        {game.move ? (
+          <ElementContainer
+            $size={cellWidth}
+            $xAbsolute={game.move.position.x * cellWidth}
+            $yAbsolute={game.move.position.y * cellWidth}
+          >
+            <UIMove id={game.move.id} size="small" />
           </ElementContainer>
         ) : null}
 
