@@ -4,7 +4,9 @@ import type { RuneClient } from "rune-games-sdk/multiplayer"
 /**
  * TYPES
  */
-export type Direction = "top" | "right" | "bottom" | "left"
+export const directions = ["top", "right", "bottom", "left"] as const
+
+export type Direction = (typeof directions)[number]
 
 export type PlayerData = {
   order: number // the order of the players (1, 2, 3, or 4)
@@ -12,6 +14,7 @@ export type PlayerData = {
 }
 
 export type Cell = {
+  position: Position
   top: boolean
   right: boolean
   bottom: boolean
@@ -73,14 +76,27 @@ export const emptyGameState: GameState = {
  */
 export const createArray = (length: number) => Array.from({ length }, (_, i) => i)
 
+export const MUTATION_WARNING_extractRandomItemFromArray = <T>(array: T[]) => {
+  const randomIndex = Math.floor(Math.random() * array.length)
+  return array.splice(randomIndex, 1)[0]
+}
+
+export const arePositionsEqual = (position1: Position, position2: Position) => {
+  return position1.x === position2.x && position1.y === position2.y
+}
+
 /**
  * GAME FUNCTIONS
  */
 // Randomized depth-first search - Iterative implementation with stack (thanks @thecodingtrain)
 const generateMaze = () => {
-  const cells = createArray(MAZE_SIZE).map(() => {
-    return createArray(MAZE_SIZE).map(() => {
+  const cells = createArray(MAZE_SIZE).map((_, y) => {
+    return createArray(MAZE_SIZE).map((_, x) => {
       const cell: Cell = {
+        position: {
+          x,
+          y,
+        },
         top: true,
         right: true,
         bottom: true,
@@ -195,7 +211,7 @@ export const checkIfCanMove = ({
 
   const x = player.position.x
   const y = player.position.y
-  const targetPosition = {
+  const targetPosition: Position = {
     x: direction === "left" ? x - 1 : direction === "right" ? x + 1 : x,
     y: direction === "top" ? y - 1 : direction === "bottom" ? y + 1 : y,
   }
@@ -203,6 +219,11 @@ export const checkIfCanMove = ({
   const isOutOfBounds =
     targetPosition.x < 0 || targetPosition.x >= MAZE_SIZE || targetPosition.y < 0 || targetPosition.y >= MAZE_SIZE
   if (isOutOfBounds) {
+    return false
+  }
+
+  const isTargetPositionTakenByBouncer = game.bouncer && arePositionsEqual(game.bouncer.position, targetPosition)
+  if (isTargetPositionTakenByBouncer) {
     return false
   }
 
@@ -310,6 +331,8 @@ Rune.initLogic({
       [key: string]: PlayerData
     } = {}
 
+    const maze = generateMaze()
+
     const positionsBucket = createArray(MAZE_SIZE)
       .map((_, i) => {
         return createArray(MAZE_SIZE).map((_, j) => {
@@ -318,10 +341,25 @@ Rune.initLogic({
       })
       .flat()
 
+    const positionsWith3Walls = maze
+      .map((row) => {
+        return row.filter((cell) => {
+          return directions.filter((direction) => cell[direction] === true).length === 3
+        })
+      })
+      .flat()
+
+    const doorCell = MUTATION_WARNING_extractRandomItemFromArray(positionsWith3Walls)
+    const doorPosition = doorCell.position
+    const doorDirectionWithoutWall = directions.find((direction) => !doorCell[direction])
+    const bouncerPosition: Position = {
+      x: doorPosition.x + (doorDirectionWithoutWall === "left" ? -1 : doorDirectionWithoutWall === "right" ? 1 : 0),
+      y: doorPosition.y + (doorDirectionWithoutWall === "top" ? -1 : doorDirectionWithoutWall === "bottom" ? 1 : 0),
+    }
+
     let order = 1
     for (const playerId of allPlayerIds) {
-      const randomPositionIndex = Math.floor(Math.random() * positionsBucket.length)
-      const randomPosition = positionsBucket.splice(randomPositionIndex, 1)[0]
+      const randomPosition = MUTATION_WARNING_extractRandomItemFromArray(positionsBucket)
       players[playerId] = {
         order,
         position: randomPosition,
@@ -332,15 +370,13 @@ Rune.initLogic({
     return {
       isLoaded: true,
       players,
-      maze: generateMaze(),
+      maze,
       bouncer: {
-        // TODO!: initialize bouncer & add collision
-        position: { x: 0, y: 1 },
+        position: bouncerPosition,
         movesRequired: [],
       },
       door: {
-        // TODO!: initialize door & add collision
-        position: { x: 0, y: 0 },
+        position: doorPosition,
       },
     }
   },
