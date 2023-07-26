@@ -11,6 +11,7 @@ export type Direction = (typeof directions)[number]
 export type PlayerData = {
   order: number // the order of the players (1, 2, 3, or 4)
   position: Position
+  moves: Move[]
 }
 
 export type Cell = {
@@ -193,9 +194,13 @@ const generateMaze = () => {
 }
 
 const checkIfPositionIsTaken = (game: GameState, position: Position) => {
-  return Object.values(game.players).some((player) => {
+  const isTakenByPlayer = Object.values(game.players).some((player) => {
     return player.position.x === position.x && player.position.y === position.y
   })
+  const isTakenByDoor = game.door && arePositionsEqual(game.door.position, position)
+  const isTakenByBouncer = game.bouncer && arePositionsEqual(game.bouncer.position, position)
+  const isTakenByMove = game.move && arePositionsEqual(game.move.position, position)
+  return isTakenByPlayer || isTakenByDoor || isTakenByBouncer || isTakenByMove
 }
 
 const getRandomPosition = (game: GameState) => {
@@ -353,7 +358,7 @@ Rune.initLogic({
 
     const maze = generateMaze()
 
-    const positionsBucket = createArray(MAZE_SIZE)
+    let positionsBucket = createArray(MAZE_SIZE)
       .map((_, i) => {
         return createArray(MAZE_SIZE).map((_, j) => {
           return { x: j, y: i }
@@ -368,7 +373,6 @@ Rune.initLogic({
         })
       })
       .flat()
-
     const doorCell = MUTATION_WARNING_extractRandomItemFromArray(positionsWith3Walls)
     const doorPosition = doorCell.position
     const doorDirectionWithoutWall = directions.find((direction) => !doorCell[direction])
@@ -376,6 +380,9 @@ Rune.initLogic({
       x: doorPosition.x + (doorDirectionWithoutWall === "left" ? -1 : doorDirectionWithoutWall === "right" ? 1 : 0),
       y: doorPosition.y + (doorDirectionWithoutWall === "top" ? -1 : doorDirectionWithoutWall === "bottom" ? 1 : 0),
     }
+    positionsBucket = positionsBucket.filter((position) => {
+      return !arePositionsEqual(position, doorPosition) && !arePositionsEqual(position, bouncerPosition)
+    })
 
     const moveId = getRandomItemFromArray(moves)
     const movePosition = MUTATION_WARNING_extractRandomItemFromArray(positionsBucket)
@@ -386,6 +393,7 @@ Rune.initLogic({
       players[playerId] = {
         order,
         position: randomPosition,
+        moves: [],
       }
       order = order + 1
     }
@@ -445,6 +453,7 @@ Rune.initLogic({
       game.players[playerId] = {
         order: possibleOrders[0],
         position: getRandomPosition(game),
+        moves: [],
       }
     },
     playerLeft: (playerId, { game }) => {

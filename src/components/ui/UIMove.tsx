@@ -1,8 +1,10 @@
+import { useMemo } from "react"
 import { styled } from "styled-components"
 import { Move } from "../../rune/logic"
 import { useDimensions } from "../../stores/dimensions.store"
+import { log } from "../../utils.ts/debug.utils"
 
-type UIMoveSize = "small" | "medium" | "large"
+type UIMoveSize = "inside-cell" | "medium" | "large"
 
 type UIMoveProps = {
   id?: Move
@@ -10,11 +12,25 @@ type UIMoveProps = {
 }
 
 export const UIMove = ({ id, size }: UIMoveProps) => {
-  const { cellWidth } = useDimensions()
+  const { availableWidth, cellWidth, aspectRatio } = useDimensions()
 
-  const sizePx = moveSizesRelativeToCellWidth[size] * cellWidth
+  const sizes: Record<UIMoveSize, number> = useMemo(() => {
+    const height = availableWidth / aspectRatio
+    const availableSpace = Math.min(height - availableWidth, availableWidth)
+    console.log({ height })
 
-  return <Root $size={sizePx}>{id || ""}</Root>
+    return {
+      "inside-cell": 0.6 * cellWidth,
+      medium: availableSpace * 0.1,
+      large: availableSpace * 0.15,
+    }
+  }, [aspectRatio, availableWidth, cellWidth])
+
+  if (size === "large") {
+    log(aspectRatio, sizes[size])
+  }
+
+  return <Root $size={sizes[size]}>{id || ""}</Root>
 }
 
 const Root = styled.div<{ $size: number }>`
@@ -23,8 +39,3 @@ const Root = styled.div<{ $size: number }>`
   background-color: lightgray;
   border-radius: 4px;
 `
-const moveSizesRelativeToCellWidth: Record<UIMoveSize, number> = {
-  small: 0.6,
-  medium: 0.8,
-  large: 1.5,
-}

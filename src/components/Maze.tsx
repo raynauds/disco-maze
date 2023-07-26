@@ -13,7 +13,6 @@ export const Maze = () => {
   const { availableWidth, cellWidth } = useDimensions()
   const game = useGame()
   const yourPlayerId = useYourPlayerId()
-
   const cells = game.maze.flat()
 
   const dancers = useMemo(() => {
@@ -43,7 +42,7 @@ export const Maze = () => {
 
   return (
     <Root>
-      <MazeArea $width={availableWidth}>
+      <MazeArea $width={availableWidth - 2 * MAZE_HORIZONTAL_MARGIN_PX}>
         {dancers.map((dancer) => {
           return (
             <ElementContainer
@@ -83,11 +82,11 @@ export const Maze = () => {
             $xAbsolute={game.move.position.x * cellWidth}
             $yAbsolute={game.move.position.y * cellWidth}
           >
-            <UIMove id={game.move.id} size="small" />
+            <UIMove id={game.move.id} size="inside-cell" />
           </ElementContainer>
         ) : null}
 
-        <CellsContainer>
+        <CellsContainer $cellWidth={cellWidth}>
           {cells.map((cell, index) => {
             const x = index % MAZE_SIZE
             const y = Math.floor(index / MAZE_SIZE)
@@ -105,8 +104,8 @@ const Root = styled.div`
   justify-content: center;
   align-items: center;
   width: 100%;
-  margin-left: ${MAZE_HORIZONTAL_MARGIN_PX}px;
-  margin-right: ${MAZE_HORIZONTAL_MARGIN_PX}px;
+  padding-left: ${MAZE_HORIZONTAL_MARGIN_PX}px;
+  padding-right: ${MAZE_HORIZONTAL_MARGIN_PX}px;
 `
 
 const MazeArea = styled.div<{ $width: number }>`
@@ -126,7 +125,7 @@ const ElementContainer = styled.div<{ $size: number; $xAbsolute: number; $yAbsol
   height: ${(props) => props.$size}px;
 `
 
-const CellsContainer = styled.div`
+const CellsContainer = styled.div<{ $cellWidth: number }>`
   position: absolute;
   top: 0;
   right: 0;
@@ -135,7 +134,7 @@ const CellsContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(${MAZE_SIZE}, 1fr);
   grid-template-rows: repeat(${MAZE_SIZE}, 1fr);
-  width: 100%;
-  height: 100%;
+  width: ${(props) => props.$cellWidth * MAZE_SIZE};
+  height: ${(props) => props.$cellWidth * MAZE_SIZE};
   border: 1px solid lightgrey;
 `
