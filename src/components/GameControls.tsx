@@ -1,3 +1,4 @@
+import { useCallback, useEffect } from "react"
 import { styled } from "styled-components"
 import { Direction, checkIfCanMove } from "../rune/logic"
 import { useGame, useYourPlayerId } from "../stores/game.store"
@@ -7,18 +8,44 @@ export const GameControls = () => {
   const game = useGame()
   const yourPlayerId = useYourPlayerId()
 
-  const move = (direction: Direction) => {
-    if (!yourPlayerId) {
-      return
-    }
+  const move = useCallback(
+    (direction: Direction) => {
+      if (!yourPlayerId) {
+        return
+      }
 
-    const canMove = checkIfCanMove({ game, playerId: yourPlayerId, direction })
-    if (!canMove) {
-      return // TODO: display failing move
-    }
+      const canMove = checkIfCanMove({ game, playerId: yourPlayerId, direction })
+      if (!canMove) {
+        return // TODO: display failing move
+      }
 
-    Rune.actions.move({ direction })
-  }
+      Rune.actions.move({ direction })
+    },
+    [game, yourPlayerId],
+  )
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      switch (event.key) {
+        case "ArrowUp":
+          move("top")
+          break
+        case "ArrowRight":
+          move("right")
+          break
+        case "ArrowDown":
+          move("bottom")
+          break
+        case "ArrowLeft":
+          move("left")
+          break
+      }
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => {
+      document.removeEventListener("keydown", onKeyDown)
+    }
+  }, [move])
 
   return (
     <Root>

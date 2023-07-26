@@ -8,10 +8,8 @@ export const UIDoor = () => {
 }
 
 const Root = styled.div<{ $size: number }>`
-  /* width: ${(props) => props.$size}px;
-  height: ${(props) => props.$size}px; */
-  width: 30px;
-  height: 30px;
+  width: ${(props) => props.$size}px;
+  height: ${(props) => props.$size}px;
   background-color: #a17b15;
   border-top-left-radius: 30%;
   border-top-right-radius: 30%;

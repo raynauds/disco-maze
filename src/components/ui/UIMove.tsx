@@ -1,12 +1,12 @@
 import { useMemo } from "react"
 import { styled } from "styled-components"
-import { Move } from "../../rune/logic"
+import { MoveName } from "../../rune/logic"
 import { useDimensions } from "../../stores/dimensions.store"
 
-type UIMoveSize = "inside-cell" | "medium" | "large"
+type UIMoveSize = "inside-cell" | "small" | "medium" | "large"
 
 type UIMoveProps = {
-  id?: Move
+  id?: MoveName
   size: UIMoveSize
 }
 
@@ -19,6 +19,7 @@ export const UIMove = ({ id, size }: UIMoveProps) => {
 
     return {
       "inside-cell": 0.6 * cellWidth,
+      small: availableSpace * 0.07,
       medium: availableSpace * 0.1,
       large: availableSpace * 0.15,
     }

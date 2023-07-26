@@ -8,20 +8,22 @@ import { UIMove } from "./ui/UIMove"
 
 export const GameInformation = () => {
   const game = useGame()
-  const moveId = game.move?.isCollected ? game.move.id : undefined
+  const collectedMoveId = game.move?.isCollected ? game.move.id : undefined
+  const isBouncerFound = !!game.bouncer?.isFound
+  const movesDisplayedInDialog = game.bouncer && isBouncerFound ? game.bouncer.movesRequired : undefined
 
   return (
     <Root>
       <FindContainer>
         <FindMoveContainer>
           <CheckboxContainer>
-            <UICheckbox />
+            <UICheckbox isChecked={!!collectedMoveId} />
           </CheckboxContainer>
-          <UIMove id={moveId} size="medium" />
+          <UIMove id={collectedMoveId} size="medium" />
         </FindMoveContainer>
         <FindBouncerContainer>
           <CheckboxContainer>
-            <UICheckbox />
+            <UICheckbox isChecked={isBouncerFound} />
           </CheckboxContainer>
           <UIBouncerAvatar />
         </FindBouncerContainer>
@@ -32,7 +34,7 @@ export const GameInformation = () => {
           <BouncerAvatarContainer>
             <UIBouncerAvatar />
           </BouncerAvatarContainer>
-          <UIBouncerDialog />
+          <UIBouncerDialog moves={movesDisplayedInDialog} />
         </BouncerContainer>
       </BouncerContainerContainer>
     </Root>

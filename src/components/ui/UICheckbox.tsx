@@ -1,7 +1,11 @@
 import { styled } from "styled-components"
 
-export const UICheckbox = () => {
-  return <Root></Root>
+type UICheckboxProps = {
+  isChecked: boolean
+}
+
+export const UICheckbox = ({ isChecked }: UICheckboxProps) => {
+  return <Root>{isChecked ? "X" : ""}</Root>
 }
 
 const Root = styled.div`
