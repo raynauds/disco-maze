@@ -1,5 +1,5 @@
 // WARNING!: All Rune logic must be self-contained, no imports allowed
-import type { RuneClient } from "rune-games-sdk/multiplayer"
+import type { GameOverOptions, RuneClient } from "rune-games-sdk/multiplayer"
 
 /*********************************************************************************************************************
  * TYPES
@@ -86,6 +86,9 @@ declare global {
 export const MAZE_SIZE = 3
 
 export const MAX_LEVEL = 8
+
+export const MAX_GAME_TIME_SECONDS = 5 * 60 // TODO!: balance
+export const EXTRA_SECOND_BONUS = 1
 
 export const MOVE_INVENTORY_SIZE = {
   ONE_PLAYER: 4,
@@ -616,6 +619,20 @@ export const goToNextLevel = (game: GameState) => {
   game.move = move
 }
 
+const getGameOverPlayers = ({
+  players,
+  score,
+}: {
+  players: GameState["players"]
+  score: GameOverOptions["players"][string]
+}) => {
+  return Object.fromEntries(
+    Object.keys(players).map((playerId) => {
+      return [playerId, score] as const
+    }),
+  )
+}
+
 /*********************************************************************************************************************
  * RUNE LOGIC
  *********************************************************************************************************************/
@@ -735,11 +752,7 @@ Rune.initLogic({
       const hasFoundDoor = !!door && arePositionsEqual(player.position, door.position)
       const isGameFinished = hasFoundDoor && game.level >= MAX_LEVEL
       if (isGameFinished) {
-        const allPlayersWin = Object.fromEntries(
-          Object.keys(game.players).map((playerId) => {
-            return [playerId, "WON"] as const
-          }),
-        )
+        const allPlayersWin = getGameOverPlayers({ players: game.players, score: "WON" })
         Rune.gameOver({ players: allPlayersWin })
       } else if (hasFoundDoor) {
         goToNextLevel(game)
@@ -799,5 +812,12 @@ Rune.initLogic({
     playerLeft: (playerId, { game }) => {
       delete game.players[playerId]
     },
+  },
+  update: ({ game }) => {
+    const gameTimeInSeconds = Rune.gameTimeInSeconds()
+    if (gameTimeInSeconds > MAX_GAME_TIME_SECONDS + EXTRA_SECOND_BONUS) {
+      const allPlayersLose = getGameOverPlayers({ players: game.players, score: game.level })
+      Rune.gameOver({ players: allPlayersLose })
+    }
   },
 })

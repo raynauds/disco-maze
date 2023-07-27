@@ -5,6 +5,7 @@ import { GameControls } from "../GameControls"
 import { GameInformation } from "../GameInformation"
 import { Maze } from "../Maze"
 import { MovesInventory } from "../MovesInventory"
+import { Timer } from "../Timer"
 
 export const HomeScreen = () => {
   const { availableWidth } = useDimensions()
@@ -13,7 +14,10 @@ export const HomeScreen = () => {
     <Root>
       <AspectRatioContainer $width={availableWidth}>
         <TopSectionContainer>
-          <GameInformation />
+          <GameInformationContainer>
+            <GameInformation />
+          </GameInformationContainer>
+          <Timer />
         </TopSectionContainer>
         <MiddleSectionContainer>
           <Maze />
@@ -45,11 +49,17 @@ const AspectRatioContainer = styled.div<{ $width: number }>`
 const TopSectionContainer = styled.div`
   flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   padding-left: ${theme.spacing(2)};
   padding-right: ${theme.spacing(2)};
+`
+
+const GameInformationContainer = styled.div`
+  width: 100%;
+  margin-bottom: ${theme.spacing(2)};
 `
 
 const MiddleSectionContainer = styled.div`
