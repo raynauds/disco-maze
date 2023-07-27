@@ -14,6 +14,14 @@ export const theme = {
     },
   },
   spacing: (factor: number) => `${defaultSpacing * factor}px`,
+  ratio: {
+    imageInCell: 0.6,
+  },
+  availableWidthFraction: {
+    small: 0.07,
+    medium: 0.1,
+    large: 0.15,
+  },
 } as const
 
 export type UITheme = typeof theme

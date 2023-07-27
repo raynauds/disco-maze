@@ -49,10 +49,10 @@ export const GameControls = () => {
 
   return (
     <Root>
-      <UIControlButtonLeft onClick={() => move("left")} />
-      <UIControlButtonRight onClick={() => move("right")} />
-      <UIControlButtonTop onClick={() => move("top")} />
-      <UIControlButtonBottom onClick={() => move("bottom")} />
+      <UIControlButtonTop onClick={() => move("top")} direction="top" />
+      <UIControlButtonRight onClick={() => move("right")} direction="right" />
+      <UIControlButtonBottom onClick={() => move("bottom")} direction="bottom" />
+      <UIControlButtonLeft onClick={() => move("left")} direction="left" />
     </Root>
   )
 }

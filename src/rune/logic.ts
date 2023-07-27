@@ -82,7 +82,7 @@ declare global {
 /*********************************************************************************************************************
  * DATA
  *********************************************************************************************************************/
-export const MAZE_SIZE = 9
+export const MAZE_SIZE = 3
 export const MOVE_INVENTORY_SIZE = 4
 
 export const emptyGameState: GameState = {
