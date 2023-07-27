@@ -76,6 +76,9 @@ export const Maze = () => {
         ) : null}
 
         {dancers.map((dancer) => {
+          if (dancer.player.hasFoundDoor) {
+            return null
+          }
           return (
             <ElementContainer
               key={dancer.playerId}

@@ -12,6 +12,7 @@ export type PlayerData = {
   order: number // the order of the players (1, 2, 3, or 4)
   position: Position
   moves: MoveName[]
+  hasFoundDoor: boolean
 }
 
 export type Cell = {
@@ -83,7 +84,7 @@ declare global {
 /*********************************************************************************************************************
  * DATA
  *********************************************************************************************************************/
-export const MAZE_SIZE = 3
+export const MAZE_SIZE = 4
 
 export const MAX_LEVEL = 8
 
@@ -361,6 +362,9 @@ export const checkIfCanMove = ({
 
   const otherPlayers = Object.keys(game.players).filter((otherPlayerId) => {
     const otherPlayer = game.players[otherPlayerId]
+    if (otherPlayer.hasFoundDoor) {
+      return false
+    }
     return !!otherPlayer && playerId !== otherPlayerId
   })
   const isOtherPlayerOnTargetPosition = otherPlayers.some((otherPlayerId) => {
@@ -607,6 +611,7 @@ export const goToNextLevel = (game: GameState) => {
 
   for (const playerId of Object.keys(game.players)) {
     const player = game.players[playerId]
+    player.hasFoundDoor = false
     player.position = MUTATION_WARNING_extractPositionThatDoesNotSeeBouncerOrMove({
       game,
       positionsBucket,
@@ -682,6 +687,7 @@ Rune.initLogic({
         order,
         position: playerPosition,
         moves: [],
+        hasFoundDoor: false,
       }
 
       order = order + 1
@@ -701,7 +707,7 @@ Rune.initLogic({
   actions: {
     move: ({ direction }, { game, playerId }) => {
       const player = game.players[playerId]
-      if (!player) {
+      if (!player || player.hasFoundDoor) {
         throw Rune.invalidAction()
       }
 
@@ -750,11 +756,23 @@ Rune.initLogic({
 
       const door = game.door
       const hasFoundDoor = !!door && arePositionsEqual(player.position, door.position)
-      const isGameFinished = hasFoundDoor && game.level >= MAX_LEVEL
+      if (hasFoundDoor) {
+        player.hasFoundDoor = true
+      }
+
+      const hasEveryPLayerFoundDoor = Object.values(game.players).every((player) => {
+        return player.hasFoundDoor
+      })
+
+      const isGameFinished =
+        game.level >= MAX_LEVEL &&
+        Object.values(game.players).every((player) => {
+          return player.hasFoundDoor
+        })
       if (isGameFinished) {
-        const allPlayersWin = getGameOverPlayers({ players: game.players, score: "WON" })
+        const allPlayersWin = getGameOverPlayers({ players: game.players, score: Rune.gameTimeInSeconds() })
         Rune.gameOver({ players: allPlayersWin })
-      } else if (hasFoundDoor) {
+      } else if (hasEveryPLayerFoundDoor) {
         goToNextLevel(game)
       }
     },
@@ -807,6 +825,7 @@ Rune.initLogic({
         order: possibleOrders[0],
         position: getRandomPosition(game),
         moves: [],
+        hasFoundDoor: false,
       }
     },
     playerLeft: (playerId, { game }) => {
