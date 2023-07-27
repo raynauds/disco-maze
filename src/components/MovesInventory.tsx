@@ -1,6 +1,12 @@
 import { useCallback } from "react"
 import { styled } from "styled-components"
-import { MOVE_INVENTORY_SIZE, MoveName, checkIfCanPerformMove, createArray } from "../rune/logic"
+import {
+  MAX_MOVE_INVENTORY_SIZE,
+  MoveName,
+  checkIfCanPerformMove,
+  createArray,
+  getMaxInventorySize,
+} from "../rune/logic"
 import { useGame, useYourPlayerId } from "../stores/game.store"
 import { theme } from "../theme/theme"
 import { UIMove } from "./ui/UIMove"
@@ -27,17 +33,21 @@ export const MovesInventory = () => {
     [game, yourPlayerId],
   )
 
+  const inventorySize = getMaxInventorySize({ numberOfPlayers: Object.keys(game.players).length })
+
   return (
     <Root>
-      {createArray(MOVE_INVENTORY_SIZE).map((_, index) => {
+      {createArray(MAX_MOVE_INVENTORY_SIZE).map((_, index) => {
         const move = moves[index]
+        const isDisabled = index >= inventorySize
         return (
           <UIMove
             key={index}
             id={move}
-            size="large"
+            size={"large"}
+            isDisabled={isDisabled}
             onClick={
-              move
+              move && !isDisabled
                 ? () => {
                     performMove(move)
                   }

@@ -26,4 +26,5 @@ export const images = {
     bottom: "src/assets/images/arrow_down.png",
     left: "src/assets/images/arrow_left.png",
   },
+  locked: "src/assets/images/locked.png",
 }

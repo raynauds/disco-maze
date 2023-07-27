@@ -19,8 +19,8 @@ export const UIBouncerDialog = ({ moves }: UIBouncerDialogProps) => {
     <Root $availableWidth={availableWidth} $numberOfItems={moves.length}>
       {moves.map((move, index) => {
         return (
-          <MoveContainer $availableWidth={availableWidth}>
-            <UIMove key={`${move.id}-${index}`} id={move.id} size="small" isPerformed={move.isPerformed} />
+          <MoveContainer key={`${move.id}-${index}`} $availableWidth={availableWidth}>
+            <UIMove id={move.id} size="small" isPerformed={move.isPerformed} />
           </MoveContainer>
         )
       })}

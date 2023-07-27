@@ -50,6 +50,7 @@ export type MovePerformance = {
 export type GameState = {
   isLoaded: boolean
   level: number
+  availableMoves: MoveName[]
   maze: Cell[][]
   players: {
     [key: string]: PlayerData
@@ -83,11 +84,27 @@ declare global {
  * DATA
  *********************************************************************************************************************/
 export const MAZE_SIZE = 3
-export const MOVE_INVENTORY_SIZE = 4
+
+export const MOVE_INVENTORY_SIZE = {
+  ONE_PLAYER: 4,
+  TWO_PLAYERS: 3,
+  THREE_PLAYERS: 2,
+  FOUR_PLAYERS: 2,
+}
+
+export const MAX_MOVE_INVENTORY_SIZE = MOVE_INVENTORY_SIZE.ONE_PLAYER
+
+export const MAX_AVAILABLE_MOVES_COUNT = {
+  ONE_PLAYER: MOVE_INVENTORY_SIZE.ONE_PLAYER * 1,
+  TWO_PLAYERS: MOVE_INVENTORY_SIZE.TWO_PLAYERS * 2,
+  THREE_PLAYERS: MOVE_INVENTORY_SIZE.THREE_PLAYERS * 3,
+  FOUR_PLAYERS: MOVE_INVENTORY_SIZE.FOUR_PLAYERS * 4,
+}
 
 export const emptyGameState: GameState = {
   isLoaded: false,
   level: 1,
+  availableMoves: [],
   maze: [],
   players: {},
   bouncer: {
@@ -127,6 +144,36 @@ export const MUTATION_WARNING_extractRandomItemFromArray = <T>(array: T[]) => {
 
 export const arePositionsEqual = (position1: Position, position2: Position) => {
   return position1.x === position2.x && position1.y === position2.y
+}
+
+export const getMaxInventorySize = ({ numberOfPlayers }: { numberOfPlayers: number }) => {
+  switch (numberOfPlayers) {
+    case 1:
+      return MOVE_INVENTORY_SIZE.ONE_PLAYER
+    case 2:
+      return MOVE_INVENTORY_SIZE.TWO_PLAYERS
+    case 3:
+      return MOVE_INVENTORY_SIZE.THREE_PLAYERS
+    case 4:
+      return MOVE_INVENTORY_SIZE.FOUR_PLAYERS
+    default:
+      return MOVE_INVENTORY_SIZE.ONE_PLAYER
+  }
+}
+
+const getMaxAvailableMovesCount = ({ numberOfPlayers }: { numberOfPlayers: number }) => {
+  switch (numberOfPlayers) {
+    case 1:
+      return MAX_AVAILABLE_MOVES_COUNT.ONE_PLAYER
+    case 2:
+      return MAX_AVAILABLE_MOVES_COUNT.TWO_PLAYERS
+    case 3:
+      return MAX_AVAILABLE_MOVES_COUNT.THREE_PLAYERS
+    case 4:
+      return MAX_AVAILABLE_MOVES_COUNT.FOUR_PLAYERS
+    default:
+      return MAX_AVAILABLE_MOVES_COUNT.ONE_PLAYER
+  }
 }
 
 /*********************************************************************************************************************
@@ -234,8 +281,14 @@ const getRandomPosition = (game: GameState) => {
   let iterations = 0
   const maxIterations = MAZE_SIZE * MAZE_SIZE
   while (isPositionTaken && iterations < maxIterations) {
-    y = x >= MAZE_SIZE - 1 ? y + 1 : y
-    x = (x + 1) % MAZE_SIZE
+    const isLastCell = x === MAZE_SIZE - 1 && y === MAZE_SIZE - 1
+    if (isLastCell) {
+      y = 0
+      x = 0
+    } else {
+      y = x >= MAZE_SIZE - 1 ? y + 1 : y
+      x = (x + 1) % MAZE_SIZE
+    }
     isPositionTaken = checkIfPositionIsTaken(game, { x, y })
     iterations = iterations + 1
   }
@@ -468,12 +521,14 @@ export const MUTATION_WARNING_generateBouncerDoorAndMove = ({
   positionsBucket,
   bouncerPosition,
   doorPosition,
+  availableMoves,
 }: {
   positionsBucket: Position[]
   bouncerPosition: Position
   doorPosition: Position
+  availableMoves: MoveName[]
 }) => {
-  const moveId = getRandomItemFromArray(moves)
+  const moveId = getRandomItemFromArray(availableMoves)
   const movePosition = MUTATION_WARNING_extractRandomItemFromArray(positionsBucket)
 
   const bouncer: GameState["bouncer"] = {
@@ -509,10 +564,16 @@ export const goToNextLevel = (game: GameState) => {
     positionsBucket,
   })
 
+  const availableMoves = game.availableMoves.filter((move) => {
+    const isPeviousLevelMove = move === game.move?.id
+    return !isPeviousLevelMove
+  })
+
   const { bouncer, door, move } = MUTATION_WARNING_generateBouncerDoorAndMove({
     positionsBucket,
     bouncerPosition,
     doorPosition,
+    availableMoves,
   })
   const nextLevel = game.level + 1
   game.level = nextLevel
@@ -576,10 +637,13 @@ Rune.initLogic({
       positionsBucket,
     })
 
+    const maxMovesCount = getMaxAvailableMovesCount({ numberOfPlayers: allPlayerIds.length })
+    const availableMoves = randomizeArray([...moves]).filter((_, i) => i < maxMovesCount)
     const { bouncer, door, move } = MUTATION_WARNING_generateBouncerDoorAndMove({
       positionsBucket,
       bouncerPosition,
       doorPosition,
+      availableMoves,
     })
 
     let order = 1
@@ -607,6 +671,7 @@ Rune.initLogic({
     return {
       isLoaded: true,
       level: 1,
+      availableMoves,
       players,
       maze,
       bouncer,
@@ -646,7 +711,9 @@ Rune.initLogic({
         !move.isCollected &&
         arePositionsEqual(player.position, move.position) &&
         !player.moves.includes(move.id)
-      if (!!move && hasFoundMove) {
+      const canCollectAnotherMove =
+        player.moves.length < getMaxInventorySize({ numberOfPlayers: Object.keys(game.players).length })
+      if (move && hasFoundMove && canCollectAnotherMove) {
         move.isCollected = true
         player.moves.push(move.id)
       }

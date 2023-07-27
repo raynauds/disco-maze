@@ -12,10 +12,11 @@ type UIMoveProps = {
   id?: MoveName
   size: UIMoveSize
   isPerformed?: boolean
+  isDisabled?: boolean
   onClick?: () => void
 }
 
-export const UIMove = ({ id, size, isPerformed, onClick }: UIMoveProps) => {
+export const UIMove = ({ id, size, isPerformed, isDisabled, onClick }: UIMoveProps) => {
   const { availableWidth, cellWidth, aspectRatio } = useDimensions()
 
   const sizes: Record<UIMoveSize, number> = useMemo(() => {
@@ -33,6 +34,7 @@ export const UIMove = ({ id, size, isPerformed, onClick }: UIMoveProps) => {
   const content = (
     <Root $size={sizes[size]} $isPerformed={isPerformed}>
       {id ? <UIPixelatedImage src={images.moves[id]} alt={`disco move: ${id}`} /> : <EmptyContent />}
+      {isDisabled ? <MoveSlotDisabledIcon src={images.locked} alt="move slot unavailable" /> : null}
     </Root>
   )
 
@@ -40,6 +42,7 @@ export const UIMove = ({ id, size, isPerformed, onClick }: UIMoveProps) => {
 }
 
 const Root = styled.div<{ $size: number; $isPerformed?: boolean }>`
+  position: relative;
   width: ${(props) => props.$size}px;
   height: ${(props) => props.$size}px;
   border: ${(props) => (props.$isPerformed ? "2px solid green" : "none")};
@@ -50,4 +53,9 @@ const EmptyContent = styled.div`
   height: 100%;
   background-color: lightgray;
   border-radius: 20%;
+`
+
+const MoveSlotDisabledIcon = styled(UIPixelatedImage)`
+  position: absolute;
+  inset: 0;
 `
