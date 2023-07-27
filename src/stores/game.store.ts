@@ -17,6 +17,10 @@ const useGameStore = create<GameStoreState>()((set) => ({
 }))
 
 export const useGame = () => useGameStore((state) => state.game)
+export const useCurrentLevel = () => {
+  const game = useGame()
+  return game.levels[game.currentLevelIndex]
+}
 export const usePlayers = () => useGameStore((state) => state.players)
 export const useYourPlayerId = () => useGameStore((state) => state.yourPlayerId)
 export const useSetGameState = () => useGameStore((state) => state.setGame)

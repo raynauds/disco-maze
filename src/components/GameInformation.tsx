@@ -1,5 +1,5 @@
 import { styled } from "styled-components"
-import { useGame } from "../stores/game.store"
+import { useCurrentLevel } from "../stores/game.store"
 import { theme } from "../theme/theme"
 import { UIBouncerAvatar } from "./ui/UIBouncerAvatar"
 import { UIBouncerDialog } from "./ui/UIBouncerDialog"
@@ -7,10 +7,11 @@ import { UICheckbox } from "./ui/UICheckbox"
 import { UIMove } from "./ui/UIMove"
 
 export const GameInformation = () => {
-  const game = useGame()
-  const collectedMoveId = game.move?.isCollected ? game.move.id : undefined
-  const isBouncerFound = !!game.bouncer?.isFound
-  const movesDisplayedInDialog = game.bouncer && isBouncerFound ? game.bouncer.movesRequired : undefined
+  const level = useCurrentLevel()
+  const { bouncer, move } = level
+  const collectedMoveId = move.isCollected ? move.id : undefined
+  const isBouncerFound = bouncer.isFound
+  const movesDisplayedInDialog = isBouncerFound ? bouncer.movesRequired : undefined
 
   return (
     <Root>

@@ -2,7 +2,7 @@ import { useMemo } from "react"
 import { styled } from "styled-components"
 import { MAZE_SIZE, getVisibleCells } from "../rune/logic"
 import { MAZE_HORIZONTAL_MARGIN_PX, useDimensions } from "../stores/dimensions.store"
-import { useGame, useYourPlayerId } from "../stores/game.store"
+import { useCurrentLevel, useGame, useYourPlayerId } from "../stores/game.store"
 import { UIBouncer } from "./ui/UIBouncer"
 import { UIDancer } from "./ui/UIDancer"
 import { UIDoor } from "./ui/UIDoor"
@@ -11,13 +11,16 @@ import { UIMove } from "./ui/UIMove"
 
 export const Maze = () => {
   const { availableWidth, cellWidth } = useDimensions()
-  const game = useGame()
   const yourPlayerId = useYourPlayerId()
-  const cells = game.maze.flat()
+  const game = useGame()
+  const { players } = game
+  const level = useCurrentLevel()
+  const { maze, bouncer, door, move } = level
+  const cells = maze.flat()
 
   const dancers = useMemo(() => {
-    return Object.keys(game.players).map((playerId) => {
-      const player = game.players[playerId]
+    return Object.keys(players).map((playerId) => {
+      const player = players[playerId]
       const xAbsolute = player.position.x * cellWidth
       const yAbsolute = player.position.y * cellWidth
       return {
@@ -27,51 +30,51 @@ export const Maze = () => {
         yAbsolute,
       }
     })
-  }, [cellWidth, game.players])
+  }, [cellWidth, players])
 
   const visibleCells = useMemo(() => {
-    const player = yourPlayerId ? game.players[yourPlayerId] : undefined
+    const player = yourPlayerId ? players[yourPlayerId] : undefined
     if (!player) {
       return []
     }
     return getVisibleCells({
-      game,
+      level,
       observerPosition: player.position,
     })
-  }, [game, yourPlayerId])
+  }, [level, players, yourPlayerId])
 
-  const isBouncerHidden = !!game.bouncer?.isSatisfiedWithYourMoves
+  const isBouncerHidden = bouncer.isSatisfiedWithYourMoves
 
   return (
     <Root>
       <MazeArea $width={availableWidth - 2 * MAZE_HORIZONTAL_MARGIN_PX}>
-        {game.bouncer && !isBouncerHidden ? (
+        {bouncer && !isBouncerHidden ? (
           <ElementContainer
             $size={cellWidth}
-            $xAbsolute={game.bouncer.position.x * cellWidth}
-            $yAbsolute={game.bouncer.position.y * cellWidth}
+            $xAbsolute={bouncer.position.x * cellWidth}
+            $yAbsolute={bouncer.position.y * cellWidth}
           >
             <UIBouncer />
           </ElementContainer>
         ) : null}
 
-        {game.door ? (
+        {door ? (
           <ElementContainer
             $size={cellWidth}
-            $xAbsolute={game.door.position.x * cellWidth}
-            $yAbsolute={game.door.position.y * cellWidth}
+            $xAbsolute={door.position.x * cellWidth}
+            $yAbsolute={door.position.y * cellWidth}
           >
             <UIDoor />
           </ElementContainer>
         ) : null}
 
-        {game.move && !game.move.isCollected ? (
+        {move && !move.isCollected ? (
           <ElementContainer
             $size={cellWidth}
-            $xAbsolute={game.move.position.x * cellWidth}
-            $yAbsolute={game.move.position.y * cellWidth}
+            $xAbsolute={move.position.x * cellWidth}
+            $yAbsolute={move.position.y * cellWidth}
           >
-            <UIMove id={game.move.id} size="inside-cell" />
+            <UIMove id={move.id} size="inside-cell" />
           </ElementContainer>
         ) : null}
 
