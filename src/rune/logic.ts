@@ -85,6 +85,8 @@ declare global {
  *********************************************************************************************************************/
 export const MAZE_SIZE = 3
 
+export const MAX_LEVEL = 8
+
 export const MOVE_INVENTORY_SIZE = {
   ONE_PLAYER: 4,
   TWO_PLAYERS: 3,
@@ -731,7 +733,15 @@ Rune.initLogic({
 
       const door = game.door
       const hasFoundDoor = !!door && arePositionsEqual(player.position, door.position)
-      if (hasFoundDoor) {
+      const isGameFinished = hasFoundDoor && game.level >= MAX_LEVEL
+      if (isGameFinished) {
+        const allPlayersWin = Object.fromEntries(
+          Object.keys(game.players).map((playerId) => {
+            return [playerId, "WON"] as const
+          }),
+        )
+        Rune.gameOver({ players: allPlayersWin })
+      } else if (hasFoundDoor) {
         goToNextLevel(game)
       }
     },
