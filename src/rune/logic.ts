@@ -110,6 +110,16 @@ export const getRandomItemFromArray = <T>(array: readonly T[]) => {
   return array[Math.floor(Math.random() * array.length)]
 }
 
+export const randomizeArray = <T>(array: T[]) => {
+  const arrayCopy = [...array]
+  const randomizedArray: T[] = []
+  for (let i = 0; i < array.length; i++) {
+    const randomItem = MUTATION_WARNING_extractRandomItemFromArray(arrayCopy)
+    randomizedArray.push(randomItem)
+  }
+  return randomizedArray
+}
+
 export const MUTATION_WARNING_extractRandomItemFromArray = <T>(array: T[]) => {
   const randomIndex = Math.floor(Math.random() * array.length)
   return array.splice(randomIndex, 1)[0]
@@ -399,6 +409,150 @@ export const checkIfCanPerformMove = ({ player, move }: { player: PlayerData; mo
   return true
 }
 
+export const MUTATION_WARNING_generateMazeWithBouncerAndDoor = ({
+  positionsBucket,
+}: {
+  positionsBucket: Position[]
+}) => {
+  const minBouncerCellWalls = 2
+  let maze: Cell[][] = []
+  let bouncerPosition: Position = { x: 0, y: 0 }
+  let doorPosition: Position = { x: 0, y: 0 }
+  const maxIterations = 1000
+  let iterations = 0
+  let isMazeValid = false
+
+  while (!isMazeValid && iterations < maxIterations) {
+    iterations = iterations + 1
+
+    maze = generateMaze()
+
+    const positionsWith3Walls = maze
+      .map((row) => {
+        return row.filter((cell) => {
+          return directions.filter((direction) => cell[direction] === true).length === 3
+        })
+      })
+      .flat()
+    const doorCell = MUTATION_WARNING_extractRandomItemFromArray(positionsWith3Walls)
+    doorPosition = doorCell.position
+    const doorDirectionWithoutWall = directions.find((direction) => !doorCell[direction])
+    bouncerPosition = {
+      x: doorPosition.x + (doorDirectionWithoutWall === "left" ? -1 : doorDirectionWithoutWall === "right" ? 1 : 0),
+      y: doorPosition.y + (doorDirectionWithoutWall === "top" ? -1 : doorDirectionWithoutWall === "bottom" ? 1 : 0),
+    }
+
+    const bouncerCell = maze[bouncerPosition.y][bouncerPosition.x]
+    const bouncerCellWalls = directions.filter((direction) => bouncerCell[direction] === true)
+    if (bouncerCellWalls.length < minBouncerCellWalls) {
+      continue
+    }
+
+    const doorPositionIndex = positionsBucket.findIndex((position) => {
+      return arePositionsEqual(position, doorPosition)
+    })
+    positionsBucket.splice(doorPositionIndex, 1)
+
+    const bouncerPositionIndex = positionsBucket.findIndex((position) => {
+      return arePositionsEqual(position, bouncerPosition)
+    })
+    positionsBucket.splice(bouncerPositionIndex, 1)
+
+    isMazeValid = true
+  }
+
+  return { maze, bouncerPosition, doorPosition }
+}
+
+export const MUTATION_WARNING_generateBouncerDoorAndMove = ({
+  positionsBucket,
+  bouncerPosition,
+  doorPosition,
+}: {
+  positionsBucket: Position[]
+  bouncerPosition: Position
+  doorPosition: Position
+}) => {
+  const moveId = getRandomItemFromArray(moves)
+  const movePosition = MUTATION_WARNING_extractRandomItemFromArray(positionsBucket)
+
+  const bouncer: GameState["bouncer"] = {
+    position: bouncerPosition,
+    movesRequired: [{ id: moveId, isPerformed: false }],
+    isFound: false,
+    isSatisfiedWithYourMoves: false,
+  }
+
+  const door: GameState["door"] = {
+    position: doorPosition,
+  }
+
+  const move: GameState["move"] = {
+    id: moveId,
+    position: movePosition,
+    isCollected: false,
+  }
+
+  return { bouncer, door, move }
+}
+
+export const goToNextLevel = (game: GameState) => {
+  const positionsBucket = createArray(MAZE_SIZE)
+    .map((_, i) => {
+      return createArray(MAZE_SIZE).map((_, j) => {
+        return { x: j, y: i }
+      })
+    })
+    .flat()
+
+  const { maze, bouncerPosition, doorPosition } = MUTATION_WARNING_generateMazeWithBouncerAndDoor({
+    positionsBucket,
+  })
+
+  const { bouncer, door, move } = MUTATION_WARNING_generateBouncerDoorAndMove({
+    positionsBucket,
+    bouncerPosition,
+    doorPosition,
+  })
+  const nextLevel = game.level + 1
+  game.level = nextLevel
+
+  const movesAvailable = Object.values(game.players)
+    .map((player) => {
+      return player.moves
+    })
+    .flat()
+  const movesAvailableWihoutDuplicates = [...new Set(movesAvailable)]
+  let movesRequired = createArray(nextLevel).map(() => {
+    return getRandomItemFromArray(movesAvailableWihoutDuplicates)
+  })
+
+  if (!movesRequired.includes(move.id)) {
+    movesRequired.pop()
+    movesRequired.push(move.id)
+    movesRequired = randomizeArray(movesRequired)
+  }
+  bouncer.movesRequired = movesRequired.map((moveRequired) => {
+    return {
+      id: moveRequired,
+      isPerformed: false,
+    }
+  })
+
+  for (const playerId of Object.keys(game.players)) {
+    const player = game.players[playerId]
+    player.position = MUTATION_WARNING_extractPositionThatDoesNotSeeBouncerOrMove({
+      game,
+      positionsBucket,
+    })
+  }
+
+  game.maze = maze
+  game.bouncer = bouncer
+  game.door = door
+  game.move = move
+}
+
 /*********************************************************************************************************************
  * RUNE LOGIC
  *********************************************************************************************************************/
@@ -410,7 +564,7 @@ Rune.initLogic({
       [key: string]: PlayerData
     } = {}
 
-    let positionsBucket = createArray(MAZE_SIZE)
+    const positionsBucket = createArray(MAZE_SIZE)
       .map((_, i) => {
         return createArray(MAZE_SIZE).map((_, j) => {
           return { x: j, y: i }
@@ -418,64 +572,15 @@ Rune.initLogic({
       })
       .flat()
 
-    const minBouncerCellWalls = 2
-    let maze: Cell[][] = []
-    let bouncerPosition: Position = { x: 0, y: 0 }
-    let doorPosition: Position = { x: 0, y: 0 }
-    const maxIterations = 1000
-    let iterations = 0
-    let isMazeValid = false
-    while (!isMazeValid && iterations < maxIterations) {
-      iterations = iterations + 1
+    const { maze, bouncerPosition, doorPosition } = MUTATION_WARNING_generateMazeWithBouncerAndDoor({
+      positionsBucket,
+    })
 
-      maze = generateMaze()
-
-      const positionsWith3Walls = maze
-        .map((row) => {
-          return row.filter((cell) => {
-            return directions.filter((direction) => cell[direction] === true).length === 3
-          })
-        })
-        .flat()
-      const doorCell = MUTATION_WARNING_extractRandomItemFromArray(positionsWith3Walls)
-      doorPosition = doorCell.position
-      const doorDirectionWithoutWall = directions.find((direction) => !doorCell[direction])
-      bouncerPosition = {
-        x: doorPosition.x + (doorDirectionWithoutWall === "left" ? -1 : doorDirectionWithoutWall === "right" ? 1 : 0),
-        y: doorPosition.y + (doorDirectionWithoutWall === "top" ? -1 : doorDirectionWithoutWall === "bottom" ? 1 : 0),
-      }
-
-      const bouncerCell = maze[bouncerPosition.y][bouncerPosition.x]
-      const bouncerCellWalls = directions.filter((direction) => bouncerCell[direction] === true)
-      if (bouncerCellWalls.length < minBouncerCellWalls) {
-        continue
-      }
-
-      positionsBucket = positionsBucket.filter((position) => {
-        return !arePositionsEqual(position, doorPosition) && !arePositionsEqual(position, bouncerPosition)
-      })
-      isMazeValid = true
-    }
-
-    const moveId = getRandomItemFromArray(moves)
-    const movePosition = MUTATION_WARNING_extractRandomItemFromArray(positionsBucket)
-
-    const bouncer: GameState["bouncer"] = {
-      position: bouncerPosition,
-      movesRequired: [{ id: moveId, isPerformed: false }],
-      isFound: false,
-      isSatisfiedWithYourMoves: false,
-    }
-
-    const door: GameState["door"] = {
-      position: doorPosition,
-    }
-
-    const move: GameState["move"] = {
-      id: moveId,
-      position: movePosition,
-      isCollected: false,
-    }
+    const { bouncer, door, move } = MUTATION_WARNING_generateBouncerDoorAndMove({
+      positionsBucket,
+      bouncerPosition,
+      doorPosition,
+    })
 
     let order = 1
     for (const playerId of allPlayerIds) {
@@ -535,21 +640,32 @@ Rune.initLogic({
           player.position.x += 1
       }
 
+      const move = game.move
       const hasFoundMove =
-        !!game.move && !game.move.isCollected && arePositionsEqual(player.position, game.move.position)
-      if (!!game.move && hasFoundMove) {
-        game.move.isCollected = true
-        player.moves.push(game.move.id)
+        !!move &&
+        !move.isCollected &&
+        arePositionsEqual(player.position, move.position) &&
+        !player.moves.includes(move.id)
+      if (!!move && hasFoundMove) {
+        move.isCollected = true
+        player.moves.push(move.id)
       }
 
-      if (!!game.bouncer && !game.bouncer.isFound) {
+      const bouncer = game.bouncer
+      if (!!bouncer && !bouncer.isFound) {
         const visibleCells = getVisibleCells({ game, observerPosition: player.position })
         const playerSeesBouncer = visibleCells.some((cell) => {
-          return !!game.bouncer && arePositionsEqual(cell, game.bouncer.position)
+          return !!bouncer && arePositionsEqual(cell, bouncer.position)
         })
         if (playerSeesBouncer) {
-          game.bouncer.isFound = true
+          bouncer.isFound = true
         }
+      }
+
+      const door = game.door
+      const hasFoundDoor = !!door && arePositionsEqual(player.position, door.position)
+      if (hasFoundDoor) {
+        goToNextLevel(game)
       }
     },
     performMove: ({ move }, { game, playerId }) => {

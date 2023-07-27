@@ -10,10 +10,11 @@ export const UIBouncerDialog = ({ moves }: UIBouncerDialogProps) => {
   if (!moves) {
     return <Root></Root>
   }
+
   return (
     <Root>
-      {moves.map((move) => {
-        return <UIMove key={move.id} id={move.id} size="small" isPerformed={move.isPerformed} />
+      {moves.map((move, index) => {
+        return <UIMove key={`${move.id}-${index}`} id={move.id} size="small" isPerformed={move.isPerformed} />
       })}
     </Root>
   )

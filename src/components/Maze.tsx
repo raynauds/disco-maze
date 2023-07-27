@@ -45,19 +45,6 @@ export const Maze = () => {
   return (
     <Root>
       <MazeArea $width={availableWidth - 2 * MAZE_HORIZONTAL_MARGIN_PX}>
-        {dancers.map((dancer) => {
-          return (
-            <ElementContainer
-              key={dancer.playerId}
-              $size={cellWidth}
-              $xAbsolute={dancer.xAbsolute}
-              $yAbsolute={dancer.yAbsolute}
-            >
-              <UIDancer playerId={dancer.playerId} />
-            </ElementContainer>
-          )
-        })}
-
         {game.bouncer && !isBouncerHidden ? (
           <ElementContainer
             $size={cellWidth}
@@ -87,6 +74,19 @@ export const Maze = () => {
             <UIMove id={game.move.id} size="inside-cell" />
           </ElementContainer>
         ) : null}
+
+        {dancers.map((dancer) => {
+          return (
+            <ElementContainer
+              key={dancer.playerId}
+              $size={cellWidth}
+              $xAbsolute={dancer.xAbsolute}
+              $yAbsolute={dancer.yAbsolute}
+            >
+              <UIDancer playerId={dancer.playerId} />
+            </ElementContainer>
+          )
+        })}
 
         <CellsContainer $cellWidth={cellWidth}>
           {cells.map((cell, index) => {
