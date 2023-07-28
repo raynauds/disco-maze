@@ -8,13 +8,13 @@ import { UICheckbox } from "./ui/UICheckbox"
 import { UIMove } from "./ui/UIMove"
 
 export const GameInformation = () => {
-  const { availableSpaceAroundMaze } = useDimensions()
+  const { availableWidth, availableSpaceAroundMaze } = useDimensions()
   const level = useCurrentLevel()
   const { bouncer, move } = level
   const movesDisplayedInDialog = bouncer.isFound ? bouncer.movesRequired : undefined
 
   return (
-    <Root>
+    <Root $availableWidth={availableWidth}>
       <FindContainer>
         <FindMoveContainer>
           <CheckboxContainer>
@@ -44,12 +44,14 @@ export const GameInformation = () => {
   )
 }
 
-const Root = styled.div`
+const Root = styled.div<{ $availableWidth: number }>`
   display: flex;
   width: 100%;
   justify-content: space-around;
   padding: ${theme.spacing(2)};
-  border: 1px dashed lightgrey;
+  border: 2px solid ${theme.palette.border.light};
+  border-radius: ${(props) => props.$availableWidth * 0.03}px;
+  background-color: ${theme.palette.background.light};
 `
 
 const FindContainer = styled.div`

@@ -38,10 +38,10 @@ const Root = styled.div<{ $availableWidth: number; $numberOfItems: number }>`
   grid-template-rows: repeat(${(props) => (props.$numberOfItems > 4 ? 2 : 1)}, 1fr);
   width: ${(props) => props.$availableWidth * 0.4}px;
   min-height: ${(props) => props.$availableWidth * minHeightFraction}px;
-  background-color: #f0f0f0;
+  background-color: ${theme.palette.background.main};
   padding: ${(props) => props.$availableWidth * rootPaddingFraction}px;
   border-radius: ${(props) => props.$availableWidth * 0.015}px;
-  border: 2px solid #999999;
+  border: 2px solid ${theme.palette.border.main};
 `
 
 const MoveContainer = styled.div<{ $availableWidth: number }>`

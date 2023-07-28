@@ -12,6 +12,14 @@ export const theme = {
       light: "#f3e5f5",
       main: "#ce93d8",
     },
+    background: {
+      light: "#fafafa",
+      main: "#eeeeee",
+    },
+    border: {
+      light: "#cfcfcfcf",
+      main: "#999999",
+    },
   },
   spacing: (factor: number) => `${defaultSpacing * factor}px`,
   ratio: {

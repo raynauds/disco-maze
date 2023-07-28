@@ -31,4 +31,8 @@ export const images = {
   checkboxEmpty: "src/assets/images/checkbox_empty.png",
   checkboxFilled: "src/assets/images/checkbox_filled.png",
   checkmark: "src/assets/images/checkmark.png",
+  buttonIdle: "src/assets/images/button_idle.png",
+  buttonPressed: "src/assets/images/button_pressed.png",
+  radioEmpty: "src/assets/images/radio_empty.png",
+  radioFilledGreen: "src/assets/images/radio_filled_green.png",
 }

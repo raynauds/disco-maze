@@ -9,7 +9,7 @@ import {
 } from "../rune/logic"
 import { useGame, useYourPlayerId } from "../stores/game.store"
 import { theme } from "../theme/theme"
-import { UIMove } from "./ui/UIMove"
+import { UIMoveButton } from "./ui/UIMoveButton"
 
 export const MovesInventory = () => {
   const game = useGame()
@@ -41,10 +41,9 @@ export const MovesInventory = () => {
         const move = moves[index]
         const isDisabled = index >= inventorySize
         return (
-          <UIMove
+          <UIMoveButton
             key={index}
             id={move}
-            size={"large"}
             isDisabled={isDisabled}
             onClick={
               move && !isDisabled
