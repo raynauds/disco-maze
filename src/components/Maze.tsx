@@ -9,6 +9,7 @@ import { UIDoor } from "./ui/UIDoor"
 import { UIMazeCell } from "./ui/UIMazeCell"
 import { UIMove } from "./ui/UIMove"
 import { UIFogOfWar } from "./ui/UIFogOfWar"
+import { UIDancerContainer } from "./ui/UIDancerContainer"
 
 export const Maze = () => {
   const { availableWidth, cellWidth } = useDimensions()
@@ -96,14 +97,14 @@ export const Maze = () => {
             return null
           }
           return (
-            <ElementContainer
+            <UIDancerContainer
               key={dancer.playerId}
-              $size={cellWidth}
-              $xAbsolute={dancer.xAbsolute}
-              $yAbsolute={dancer.yAbsolute}
+              cellWidth={cellWidth}
+              xAbsolute={dancer.xAbsolute}
+              yAbsolute={dancer.yAbsolute}
             >
               <UIDancer playerId={dancer.playerId} />
-            </ElementContainer>
+            </UIDancerContainer>
           )
         })}
 
