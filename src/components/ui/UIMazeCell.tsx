@@ -1,31 +1,38 @@
 import { styled } from "styled-components"
 import { Cell } from "../../rune/logic"
+import { useMemo } from "react"
+import { images } from "../../data/images"
 
 type UIMazeCellProps = {
   cell: Cell
-  isVisible: boolean
 }
 
-export const UIMazeCell = ({ cell, isVisible }: UIMazeCellProps) => {
-  return (
-    <Root $top={cell.top} $right={cell.right} $bottom={cell.bottom} $left={cell.left} $isVisible={isVisible}></Root>
-  )
+export const UIMazeCell = ({ cell }: UIMazeCellProps) => {
+  const imageSource = useMemo(() => {
+    const { top, right, bottom, left } = cell
+    const pattern = [top, right, bottom, left].map((hasWall) => (hasWall ? 1 : 0)).join("")
+    if (pattern === "0001") return images.walls.left
+    if (pattern === "0010") return images.walls.bottom
+    if (pattern === "0011") return images.walls.bottomLeft
+    if (pattern === "0100") return images.walls.right
+    if (pattern === "0101") return images.walls.rightLeft
+    if (pattern === "0110") return images.walls.rightBottom
+    if (pattern === "0111") return images.walls.rightBottomLeft
+    if (pattern === "1000") return images.walls.top
+    if (pattern === "1001") return images.walls.topLeft
+    if (pattern === "1010") return images.walls.topBottom
+    if (pattern === "1011") return images.walls.topBottomLeft
+    if (pattern === "1100") return images.walls.topRight
+    if (pattern === "1101") return images.walls.topRightLeft
+    if (pattern === "1110") return images.walls.topRightBottom
+    return images.walls.top
+  }, [cell])
+
+  return <Root src={imageSource}></Root>
 }
 
-const MAZE_CELL_BORDER_WIDTH = "3px"
-
-const Root = styled.div<{
-  $top: boolean
-  $right: boolean
-  $bottom: boolean
-  $left: boolean
-  $isVisible: boolean
-}>`
-  border-style: solid;
-  border-color: lightgrey;
-  border-top-width: ${(props) => (props.$top ? MAZE_CELL_BORDER_WIDTH : 0)};
-  border-right-width: ${(props) => (props.$right ? MAZE_CELL_BORDER_WIDTH : 0)};
-  border-bottom-width: ${(props) => (props.$bottom ? MAZE_CELL_BORDER_WIDTH : 0)};
-  border-left-width: ${(props) => (props.$left ? MAZE_CELL_BORDER_WIDTH : 0)};
-  background-color: ${(props) => (props.$isVisible ? "transparent" : "rgba(0, 0, 0, 0.7)")};
+const Root = styled.img`
+  width: 100%;
+  height: 100%;
+  image-rendering: pixelated;
 `

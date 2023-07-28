@@ -8,6 +8,7 @@ import { UIDancer } from "./ui/UIDancer"
 import { UIDoor } from "./ui/UIDoor"
 import { UIMazeCell } from "./ui/UIMazeCell"
 import { UIMove } from "./ui/UIMove"
+import { UIFogOfWar } from "./ui/UIFogOfWar"
 
 export const Maze = () => {
   const { availableWidth, cellWidth } = useDimensions()
@@ -48,6 +49,18 @@ export const Maze = () => {
   return (
     <Root>
       <MazeArea $width={availableWidth - 2 * MAZE_HORIZONTAL_MARGIN_PX}>
+        <CellsContainer $cellWidth={cellWidth}>
+          {cells.map((cell, index) => {
+            const x = index % MAZE_SIZE
+            const y = Math.floor(index / MAZE_SIZE)
+            const isVisible = visibleCells.some((visibleCell) => visibleCell.x === x && visibleCell.y === y)
+            if (!isVisible) {
+              return <div />
+            }
+            return <UIMazeCell key={index} cell={cell} />
+          })}
+        </CellsContainer>
+
         {bouncer && !isBouncerHidden ? (
           <ElementContainer
             $size={cellWidth}
@@ -95,11 +108,14 @@ export const Maze = () => {
         })}
 
         <CellsContainer $cellWidth={cellWidth}>
-          {cells.map((cell, index) => {
+          {cells.map((_, index) => {
             const x = index % MAZE_SIZE
             const y = Math.floor(index / MAZE_SIZE)
             const isVisible = visibleCells.some((visibleCell) => visibleCell.x === x && visibleCell.y === y)
-            return <UIMazeCell key={index} cell={cell} isVisible={isVisible} />
+            if (isVisible) {
+              return <div />
+            }
+            return <UIFogOfWar key={index} />
           })}
         </CellsContainer>
       </MazeArea>
@@ -120,7 +136,7 @@ const MazeArea = styled.div<{ $width: number }>`
   position: relative;
   width: ${(props) => props.$width}px;
   height: ${(props) => props.$width}px;
-  background-color: #ffffff;
+  background-color: #000000;
 `
 
 const ElementContainer = styled.div<{ $size: number; $xAbsolute: number; $yAbsolute: number }>`
