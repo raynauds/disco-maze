@@ -21,23 +21,37 @@ export const getAspectRatio = () => {
   return getAvailableWidth() / window.innerHeight
 }
 
+export const getAvailableSpaceAroundMaze = () => {
+  const availableWidth = getAvailableWidth()
+  const aspectRatio = getAspectRatio()
+  const height = availableWidth / aspectRatio
+  return Math.min(height - availableWidth, availableWidth)
+}
+
 type DimensionsStore = {
   availableWidth: number
   cellWidth: number
   aspectRatio: number
-  setDimensions: (dimensions: { availableWidth: number; cellWidth: number; aspectRatio: number }) => void
+  availableSpaceAroundMaze: number
+  setDimensions: (dimensions: Omit<DimensionsStore, "setDimensions">) => void
 }
 
 export const useDimensionsStore = create<DimensionsStore>()((set) => ({
   availableWidth: getAvailableWidth(),
   cellWidth: getCellWidth(),
   aspectRatio: getAspectRatio(),
+  availableSpaceAroundMaze: getAvailableSpaceAroundMaze(),
   setDimensions: (dimensions) => set(() => ({ ...dimensions })),
 }))
 
-export const useDimensions = () => {
+export const useDimensions = (): Omit<DimensionsStore, "setDimensions"> => {
   return useDimensionsStore(
-    (state) => ({ availableWidth: state.availableWidth, cellWidth: state.cellWidth, aspectRatio: state.aspectRatio }),
+    (state) => ({
+      availableWidth: state.availableWidth,
+      cellWidth: state.cellWidth,
+      aspectRatio: state.aspectRatio,
+      availableSpaceAroundMaze: state.availableSpaceAroundMaze,
+    }),
     shallow,
   )
 }
@@ -50,7 +64,8 @@ export const useResponsive = () => {
       const availableWidth = getAvailableWidth()
       const cellWidth = getCellWidth()
       const aspectRatio = getAspectRatio()
-      setDimensions({ availableWidth, cellWidth, aspectRatio })
+      const availableSpaceAroundMaze = getAvailableSpaceAroundMaze()
+      setDimensions({ availableWidth, cellWidth, aspectRatio, availableSpaceAroundMaze })
     }
 
     window.addEventListener("resize", onResize)

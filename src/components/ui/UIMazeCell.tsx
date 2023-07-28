@@ -27,5 +27,5 @@ const Root = styled.div<{
   border-right-width: ${(props) => (props.$right ? MAZE_CELL_BORDER_WIDTH : 0)};
   border-bottom-width: ${(props) => (props.$bottom ? MAZE_CELL_BORDER_WIDTH : 0)};
   border-left-width: ${(props) => (props.$left ? MAZE_CELL_BORDER_WIDTH : 0)};
-  background-color: ${(props) => (props.$isVisible ? "transparent" : "rgba(0, 0, 0, 0.3)")};
+  background-color: ${(props) => (props.$isVisible ? "transparent" : "rgba(0, 0, 0, 0.7)")};
 `

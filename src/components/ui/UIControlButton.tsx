@@ -11,13 +11,10 @@ type UIControlButtonProps = {
 }
 
 export const UIControlButton = ({ direction, className, onClick }: UIControlButtonProps) => {
-  const { availableWidth, aspectRatio } = useDimensions()
-
-  const height = availableWidth / aspectRatio
-  const availableSpace = Math.min(height - availableWidth, availableWidth)
+  const { availableSpaceAroundMaze } = useDimensions()
 
   return (
-    <Root onClick={onClick} className={className} $availableSpace={availableSpace}>
+    <Root onClick={onClick} className={className} $availableSpace={availableSpaceAroundMaze}>
       <UIPixelatedImage src={images.arrows[direction]} alt={`moving direction: ${direction}`} />
     </Root>
   )

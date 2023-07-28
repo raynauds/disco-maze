@@ -17,24 +17,24 @@ type UIMoveProps = {
 }
 
 export const UIMove = ({ id, size, isPerformed, isDisabled, onClick }: UIMoveProps) => {
-  const { availableWidth, cellWidth, aspectRatio } = useDimensions()
+  const { cellWidth, availableSpaceAroundMaze } = useDimensions()
 
   const sizes: Record<UIMoveSize, number> = useMemo(() => {
-    const height = availableWidth / aspectRatio
-    const availableSpace = Math.min(height - availableWidth, availableWidth)
-
     return {
       "inside-cell": theme.ratio.imageInCell * cellWidth,
-      small: availableSpace * theme.availableWidthFraction.small,
-      medium: availableSpace * theme.availableWidthFraction.medium,
-      large: availableSpace * theme.availableWidthFraction.large,
+      small: availableSpaceAroundMaze * theme.availableWidthFraction.small,
+      medium: availableSpaceAroundMaze * theme.availableWidthFraction.medium,
+      large: availableSpaceAroundMaze * theme.availableWidthFraction.large,
     }
-  }, [aspectRatio, availableWidth, cellWidth])
+  }, [availableSpaceAroundMaze, cellWidth])
 
   const content = (
     <Root $size={sizes[size]} $isPerformed={isPerformed}>
       {id ? <UIPixelatedImage src={images.moves[id]} alt={`disco move: ${id}`} /> : <EmptyContent />}
       {isDisabled ? <MoveSlotDisabledIcon src={images.locked} alt="move slot unavailable" /> : null}
+      {isPerformed ? (
+        <CheckIcon src={images.checkmark} alt="move slot performed" $availableSpace={availableSpaceAroundMaze} />
+      ) : null}
     </Root>
   )
 
@@ -45,7 +45,6 @@ const Root = styled.div<{ $size: number; $isPerformed?: boolean }>`
   position: relative;
   width: ${(props) => props.$size}px;
   height: ${(props) => props.$size}px;
-  border: ${(props) => (props.$isPerformed ? "2px solid green" : "none")};
 `
 
 const EmptyContent = styled.div`
@@ -58,4 +57,12 @@ const EmptyContent = styled.div`
 const MoveSlotDisabledIcon = styled(UIPixelatedImage)`
   position: absolute;
   inset: 0;
+`
+
+const CheckIcon = styled.img<{ $availableSpace: number }>`
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: ${(props) => props.$availableSpace * 0.035}px;
+  height: ${(props) => props.$availableSpace * 0.035}px;
 `

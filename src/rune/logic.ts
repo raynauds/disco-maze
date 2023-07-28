@@ -9,7 +9,7 @@ export const directions = ["top", "right", "bottom", "left"] as const
 export type Direction = (typeof directions)[number]
 
 export type PlayerData = {
-  order: number // the order of the players (1, 2, 3, or 4)
+  avatarIndex: number // the avatarIndex of the players (1, 2, 3, or 4)
   position: Position
   moves: MoveName[]
   hasFoundDoor: boolean
@@ -89,7 +89,7 @@ declare global {
 /*********************************************************************************************************************
  * DATA
  *********************************************************************************************************************/
-export const MAZE_SIZE = 3
+export const MAZE_SIZE = 8
 
 export const MAX_LEVEL = 8
 
@@ -678,7 +678,7 @@ Rune.initLogic({
       takenPositions: [bouncer.position, door.position, move.position],
     })
 
-    let order = 1
+    const avatarIndicesBucket = [0, 1, 2, 3]
     for (const playerId of allPlayerIds) {
       const playerPosition = MUTATION_WARNING_extractPositionThatDoesNotSeeBouncerOrMove({
         level: firstLevel,
@@ -686,13 +686,11 @@ Rune.initLogic({
       })
 
       players[playerId] = {
-        order,
+        avatarIndex: MUTATION_WARNING_extractRandomItemFromArray(avatarIndicesBucket),
         position: playerPosition,
         moves: [],
         hasFoundDoor: false,
       }
-
-      order = order + 1
     }
 
     const game: GameState = {
@@ -818,13 +816,13 @@ Rune.initLogic({
   },
   events: {
     playerJoined: (playerId, { game }) => {
-      const possibleOrders = [1, 2, 3, 4]
+      const possibleAvatarIndices = [0, 1, 2, 3]
       for (const playerId of Object.keys(game.players)) {
-        const order = game.players[playerId].order
-        possibleOrders.splice(possibleOrders.indexOf(order), 1)
+        const avatarIndex = game.players[playerId].avatarIndex
+        possibleAvatarIndices.splice(possibleAvatarIndices.indexOf(avatarIndex), 1)
       }
       game.players[playerId] = {
-        order: possibleOrders[0],
+        avatarIndex: possibleAvatarIndices[Math.floor(Math.random() * possibleAvatarIndices.length)],
         position: getRandomPosition(game),
         moves: [],
         hasFoundDoor: false,

@@ -41,6 +41,7 @@ const Root = styled.div<{ $availableWidth: number; $numberOfItems: number }>`
   background-color: #f0f0f0;
   padding: ${(props) => props.$availableWidth * rootPaddingFraction}px;
   border-radius: ${(props) => props.$availableWidth * 0.015}px;
+  border: 2px solid #999999;
 `
 
 const MoveContainer = styled.div<{ $availableWidth: number }>`

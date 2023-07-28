@@ -1,4 +1,5 @@
 import { styled } from "styled-components"
+import { useDimensions } from "../stores/dimensions.store"
 import { useCurrentLevel } from "../stores/game.store"
 import { theme } from "../theme/theme"
 import { UIBouncerAvatar } from "./ui/UIBouncerAvatar"
@@ -7,33 +8,34 @@ import { UICheckbox } from "./ui/UICheckbox"
 import { UIMove } from "./ui/UIMove"
 
 export const GameInformation = () => {
+  const { availableSpaceAroundMaze } = useDimensions()
   const level = useCurrentLevel()
   const { bouncer, move } = level
-  const collectedMoveId = move.isCollected ? move.id : undefined
-  const isBouncerFound = bouncer.isFound
-  const movesDisplayedInDialog = isBouncerFound ? bouncer.movesRequired : undefined
+  const movesDisplayedInDialog = bouncer.isFound ? bouncer.movesRequired : undefined
 
   return (
     <Root>
       <FindContainer>
         <FindMoveContainer>
           <CheckboxContainer>
-            <UICheckbox isChecked={!!collectedMoveId} />
+            <UICheckbox isChecked={move.isCollected} />
           </CheckboxContainer>
-          <UIMove id={collectedMoveId} size="medium" />
+          <UIMove id={move.id} size="small" />
         </FindMoveContainer>
         <FindBouncerContainer>
           <CheckboxContainer>
-            <UICheckbox isChecked={isBouncerFound} />
+            <UICheckbox isChecked={bouncer.isFound} />
           </CheckboxContainer>
-          <UIBouncerAvatar />
+          <SmallBouncerAvatarContainer $availableSpace={availableSpaceAroundMaze}>
+            <UIBouncerAvatar size="small" />
+          </SmallBouncerAvatarContainer>
         </FindBouncerContainer>
       </FindContainer>
 
       <BouncerContainerContainer>
         <BouncerContainer>
-          <BouncerAvatarContainer>
-            <UIBouncerAvatar />
+          <BouncerAvatarContainer $availableSpace={availableSpaceAroundMaze}>
+            <UIBouncerAvatar size="medium" />
           </BouncerAvatarContainer>
           <UIBouncerDialog moves={movesDisplayedInDialog} />
         </BouncerContainer>
@@ -70,6 +72,10 @@ const CheckboxContainer = styled.div`
   margin-right: ${theme.spacing(1.5)};
 `
 
+const SmallBouncerAvatarContainer = styled.div<{ $availableSpace: number }>`
+  margin-bottom: ${(props) => props.$availableSpace * 0.01}px;
+`
+
 const BouncerContainerContainer = styled.div`
   flex: 1;
   display: flex;
@@ -78,10 +84,14 @@ const BouncerContainerContainer = styled.div`
 `
 
 const BouncerContainer = styled.div`
+  position: relative;
   display: flex;
   align-items: center;
 `
 
-const BouncerAvatarContainer = styled.div`
+const BouncerAvatarContainer = styled.div<{ $availableSpace: number }>`
+  top: ${(props) => props.$availableSpace * -0.07}px;
+  right: ${(props) => props.$availableSpace * -0.07}px;
   margin-right: ${theme.spacing(1)};
+  margin-bottom: ${(props) => props.$availableSpace * 0.02}px;
 `

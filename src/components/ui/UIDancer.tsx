@@ -18,7 +18,7 @@ export const UIDancer = ({ playerId }: UIDancerProps) => {
 
   return (
     <Root $size={cellWidth * theme.ratio.imageInCell}>
-      <UIPixelatedImage src={images.dancers[player.order - 1]} alt={`player ${player.order}`} />
+      <UIPixelatedImage src={images.dancers[player.avatarIndex]} alt={`player ${player.avatarIndex}`} />
     </Root>
   )
 }

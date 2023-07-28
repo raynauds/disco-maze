@@ -1,4 +1,5 @@
 import { styled } from "styled-components"
+import { images } from "../../data/images"
 import { useDimensions } from "../../stores/dimensions.store"
 import { theme } from "../../theme/theme"
 import { GameControls } from "../GameControls"
@@ -36,6 +37,8 @@ const Root = styled.div`
   justify-content: center;
   align-items: center;
   height: 100%;
+  background-image: url("${images.background}");
+  background-size: cover;
 `
 
 const AspectRatioContainer = styled.div<{ $width: number }>`

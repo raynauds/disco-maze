@@ -120,6 +120,7 @@ const MazeArea = styled.div<{ $width: number }>`
   position: relative;
   width: ${(props) => props.$width}px;
   height: ${(props) => props.$width}px;
+  background-color: #ffffff;
 `
 
 const ElementContainer = styled.div<{ $size: number; $xAbsolute: number; $yAbsolute: number }>`

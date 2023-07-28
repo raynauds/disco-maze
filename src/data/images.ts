@@ -27,4 +27,8 @@ export const images = {
     left: "src/assets/images/arrow_left.png",
   },
   locked: "src/assets/images/locked.png",
+  background: "src/assets/images/background.png",
+  checkboxEmpty: "src/assets/images/checkbox_empty.png",
+  checkboxFilled: "src/assets/images/checkbox_filled.png",
+  checkmark: "src/assets/images/checkmark.png",
 }
