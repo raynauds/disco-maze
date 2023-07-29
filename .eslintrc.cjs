@@ -14,5 +14,6 @@ module.exports = {
     "prettier/prettier": ["error", {}, { usePrettierrc: true }],
     "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
     "no-empty-pattern": "off",
+    "no-empty": "off",
   },
 }

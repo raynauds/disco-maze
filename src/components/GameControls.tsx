@@ -1,6 +1,6 @@
-import { useCallback, useEffect } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { styled } from "styled-components"
-import { Direction, checkIfCanMove } from "../rune/logic"
+import { DELAY_BETWEEN_MOVES_MS, Direction, checkIfCanMove } from "../rune/logic"
 import { useGame, useYourPlayerId } from "../stores/game.store"
 import { UIControlButton } from "./ui/UIControlButton"
 
@@ -8,9 +8,18 @@ export const GameControls = () => {
   const game = useGame()
   const yourPlayerId = useYourPlayerId()
 
+  const [lastMoveTimestamp, setLastMoveTimestamp] = useState(0)
+
   const move = useCallback(
     (direction: Direction) => {
       if (!yourPlayerId) {
+        return
+      }
+
+      const currentTimestamp = Date.now()
+      const timeSinceLastMoveMs = currentTimestamp - lastMoveTimestamp
+      const isDelayBetweenMovesPassed = timeSinceLastMoveMs > DELAY_BETWEEN_MOVES_MS
+      if (!isDelayBetweenMovesPassed) {
         return
       }
 
@@ -19,9 +28,12 @@ export const GameControls = () => {
         return // TODO: display failing move
       }
 
-      Rune.actions.move({ direction })
+      try {
+        Rune.actions.move({ direction })
+        setLastMoveTimestamp(Date.now())
+      } catch {}
     },
-    [game, yourPlayerId],
+    [game, yourPlayerId, lastMoveTimestamp],
   )
 
   useEffect(() => {
@@ -47,12 +59,14 @@ export const GameControls = () => {
     }
   }, [move])
 
+  const actionFrequencyMs = DELAY_BETWEEN_MOVES_MS * 2
+
   return (
     <Root>
-      <UIControlButtonTop onClick={() => move("top")} direction="top" />
-      <UIControlButtonRight onClick={() => move("right")} direction="right" />
-      <UIControlButtonBottom onClick={() => move("bottom")} direction="bottom" />
-      <UIControlButtonLeft onClick={() => move("left")} direction="left" />
+      <UIControlButtonTop onClick={() => move("top")} direction="top" actionFrequencyMs={actionFrequencyMs} />
+      <UIControlButtonRight onClick={() => move("right")} direction="right" actionFrequencyMs={actionFrequencyMs} />
+      <UIControlButtonBottom onClick={() => move("bottom")} direction="bottom" actionFrequencyMs={actionFrequencyMs} />
+      <UIControlButtonLeft onClick={() => move("left")} direction="left" actionFrequencyMs={actionFrequencyMs} />
     </Root>
   )
 }

@@ -56,7 +56,7 @@ export const Maze = () => {
             const y = Math.floor(index / MAZE_SIZE)
             const isVisible = visibleCells.some((visibleCell) => visibleCell.x === x && visibleCell.y === y)
             if (!isVisible) {
-              return <div />
+              return <div key={index} />
             }
             return <UIMazeCell key={index} cell={cell} />
           })}
@@ -114,7 +114,7 @@ export const Maze = () => {
             const y = Math.floor(index / MAZE_SIZE)
             const isVisible = visibleCells.some((visibleCell) => visibleCell.x === x && visibleCell.y === y)
             if (isVisible) {
-              return <div />
+              return <div key={index} />
             }
             return <UIFogOfWar key={index} />
           })}
