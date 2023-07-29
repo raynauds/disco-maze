@@ -6,7 +6,7 @@ import { useDimensions } from "../../stores/dimensions.store"
 import { theme } from "../../theme/theme"
 import { UIPixelatedImage } from "./UIImage"
 
-export type UIMoveSize = "inside-cell" | "small" | "medium" | "large"
+export type UIMoveSize = "inside-cell" | "small" | "medium" | "large" | number
 
 type UIMoveProps = {
   id: MoveName
@@ -27,7 +27,7 @@ export const UIMove = ({ id, size, isPerformed }: UIMoveProps) => {
   }, [availableSpaceAroundMaze, cellWidth])
 
   return (
-    <Root $size={sizes[size]} $isPerformed={isPerformed}>
+    <Root $size={typeof size === "number" ? size : sizes[size]} $isPerformed={isPerformed}>
       {id ? <UIPixelatedImage src={images.moves[id]} alt={`disco move: ${id}`} /> : <EmptyContent />}
       {isPerformed ? (
         <CheckIcon src={images.checkmark} alt="move slot performed" $availableSpace={availableSpaceAroundMaze} />
