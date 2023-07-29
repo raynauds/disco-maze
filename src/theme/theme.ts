@@ -30,6 +30,11 @@ export const theme = {
     medium: 0.1,
     large: 0.15,
   },
+  typography: {
+    h2: {
+      font: '"Ranchers", cursive',
+    },
+  },
 } as const
 
 export type UITheme = typeof theme

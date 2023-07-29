@@ -28,7 +28,7 @@ export const UIMove = ({ id, size, isPerformed }: UIMoveProps) => {
 
   return (
     <Root $size={typeof size === "number" ? size : sizes[size]} $isPerformed={isPerformed}>
-      {id ? <UIPixelatedImage src={images.moves[id]} alt={`disco move: ${id}`} /> : <EmptyContent />}
+      {id ? <UIPixelatedImage src={images.moves.small[id]} alt={`disco move: ${id}`} /> : <EmptyContent />}
       {isPerformed ? (
         <CheckIcon src={images.checkmark} alt="move slot performed" $availableSpace={availableSpaceAroundMaze} />
       ) : null}

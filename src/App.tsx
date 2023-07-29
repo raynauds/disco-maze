@@ -4,6 +4,7 @@ import { HomeScreen } from "./components/screens/HomeScreen"
 import { LoadingScreen } from "./components/screens/LoadingScreen"
 import { useResponsive } from "./stores/dimensions.store"
 import { useGame, useSetGameState } from "./stores/game.store"
+import { ModalProvider } from "./modals/modal.provider"
 
 function App() {
   const game = useGame()
@@ -22,7 +23,11 @@ function App() {
     return <LoadingScreen />
   }
 
-  return <HomeScreen />
+  return (
+    <ModalProvider>
+      <HomeScreen />
+    </ModalProvider>
+  )
 }
 
 export default App

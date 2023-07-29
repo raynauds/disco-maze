@@ -7,9 +7,11 @@ import { GameInformation } from "../GameInformation"
 import { Maze } from "../Maze"
 import { MovesInventory } from "../MovesInventory"
 import { Timer } from "../Timer"
+import { useOpenModal } from "../../modals/modal.store"
 
 export const HomeScreen = () => {
   const { availableWidth } = useDimensions()
+  const openModal = useOpenModal()
 
   return (
     <Root>
@@ -19,6 +21,19 @@ export const HomeScreen = () => {
             <GameInformation />
           </GameInformationContainer>
           <Timer />
+          <button
+            onClick={() =>
+              openModal({
+                type: "dance-performed",
+                props: {
+                  moveName: "roll-the-wrists",
+                  userName: "John Doe",
+                },
+              })
+            }
+          >
+            open modal
+          </button>
         </TopSectionContainer>
         <MiddleSectionContainer>
           <Maze />

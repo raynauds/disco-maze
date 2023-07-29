@@ -1,12 +1,21 @@
 import { MoveName } from "../rune/logic"
 
-const moveImages: Record<MoveName, string> = {
+const moveImagesSmall: Record<MoveName, string> = {
   "front-and-back": "src/assets/images/move_1.png",
   "the-turn-around": "src/assets/images/move_2.png",
   "roll-the-wrists": "src/assets/images/move_3.png",
   "the-chicken": "src/assets/images/move_4.png",
   "the-bump": "src/assets/images/move_5.png",
   "the-travolta": "src/assets/images/move_6.png",
+}
+
+const moveImagesLarge: Record<MoveName, string> = {
+  "front-and-back": "src/assets/images/move_1_large.png",
+  "the-turn-around": "src/assets/images/move_2_large.png",
+  "roll-the-wrists": "src/assets/images/move_3_large.png",
+  "the-chicken": "src/assets/images/move_4_large.png",
+  "the-bump": "src/assets/images/move_5_large.png",
+  "the-travolta": "src/assets/images/move_6_large.png",
 }
 
 export const images = {
@@ -19,7 +28,10 @@ export const images = {
   bouncer: "src/assets/images/bouncer.png",
   doorClosed: "src/assets/images/door_closed.png",
   doorOpen: "src/assets/images/door_open.png",
-  moves: moveImages,
+  moves: {
+    small: moveImagesSmall,
+    large: moveImagesLarge,
+  },
   arrows: {
     top: "src/assets/images/arrow_up.png",
     right: "src/assets/images/arrow_right.png",

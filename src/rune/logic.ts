@@ -32,14 +32,15 @@ export type Position = {
 // refrence: @Bustamovebook - https://www.youtube.com/playlist?list=PLA86FECA82B39229C
 // "the-bus-stop", // [INCLUDES MULTIPLE MOVES] line dance go backward, forward, to the right, to the left, move feet on place, then rotate 90° and repeat
 // "the-hustle", // [INCLUDES MULTIPLE MOVES]
+// "the-travolta-side", // legs slightly bent to the right, torso and pointing to the right, left hand on the hip, hip retroversion/anteversion while looking around
 // ??, // cf. https://youtu.be/HS6JX-B1Rpw?t=270 4:30 - rotate right arm to the bottom and to the top passing by the front while performing small forward jumps every 2 steps while arm is to the top
 const moves = [
   "front-and-back", // move forward in 3 steps, clap, move backward in 3 steps, clap
   "the-turn-around", // move to the right while turning around 360° in 3 steps, clap, same thing to the left
   "roll-the-wrists", // roll the wrists, roll the wrists, roll the wrists, roll the wrists
-  "the-chicken", // move arms like a chicken, move knees in and out
   "the-bump", // jump arms in the air, bump booty against the booty of a partner, jump again, bump on the other side - 2 players must be on adjacent cells to perform this move
   "the-travolta", // point to the top rigt, left, right, touch left foot with right hand, repeat
+  "the-chicken", // move arms like a chicken, move knees in and out
 ] as const
 
 export type MoveName = (typeof moves)[number]
