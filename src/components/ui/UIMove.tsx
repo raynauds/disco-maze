@@ -4,7 +4,7 @@ import { images } from "../../data/images"
 import { MoveName } from "../../rune/logic"
 import { useDimensions } from "../../stores/dimensions.store"
 import { theme } from "../../theme/theme"
-import { UIPixelatedImage } from "./UIImage"
+import { UIImage } from "./UIImage"
 
 export type UIMoveSize = "inside-cell" | "small" | "medium" | "large" | number
 
@@ -28,7 +28,7 @@ export const UIMove = ({ id, size, isPerformed }: UIMoveProps) => {
 
   return (
     <Root $size={typeof size === "number" ? size : sizes[size]} $isPerformed={isPerformed}>
-      {id ? <UIPixelatedImage src={images.moves.small[id]} alt={`disco move: ${id}`} /> : <EmptyContent />}
+      {id ? <UIImage src={images.moves.small[id]} alt={`disco move: ${id}`} /> : <EmptyContent />}
       {isPerformed ? (
         <CheckIcon src={images.checkmark} alt="move slot performed" $availableSpace={availableSpaceAroundMaze} />
       ) : null}
