@@ -54,13 +54,14 @@ export type MovePerformedType = "no-effect" | "bouncer-pleased" | "bouncer-not-i
 
 export type LastDanceMovePerformed = {
   moveName: MoveName
-  performancPlayerId: string
+  performancePlayerId: string
   performanceTimeSeconds: number
   type: MovePerformedType
 }
 
 export type LastDanceMoveCollected = {
   moveName: MoveName
+  collectingPlayerId: string
 }
 
 export type LevelData = {
@@ -802,6 +803,7 @@ Rune.initLogic({
         player.moves.length < getMaxInventorySize({ numberOfPlayers: Object.keys(game.players).length })
       if (move && hasFoundMove && canCollectAnotherMove) {
         move.isCollected = true
+        game.lastDanceMoveCollected = { moveName: move.id, collectingPlayerId: playerId }
         player.moves.push(move.id)
       }
 
@@ -868,7 +870,7 @@ Rune.initLogic({
 
       game.lastDanceMovePerformed = {
         moveName: move,
-        performancPlayerId: playerId,
+        performancePlayerId: playerId,
         performanceTimeSeconds: Rune.gameTimeInSeconds(),
         type: movePerformedType,
       }

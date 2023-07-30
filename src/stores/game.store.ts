@@ -24,4 +24,5 @@ export const useCurrentLevel = () => {
 export const usePlayers = () => useGameStore((state) => state.players)
 export const useYourPlayerId = () => useGameStore((state) => state.yourPlayerId)
 export const useLastDanceMovePerformed = () => useGameStore((state) => state.game.lastDanceMovePerformed)
+export const useLastDanceMoveCollected = () => useGameStore((state) => state.game.lastDanceMoveCollected)
 export const useSetGameState = () => useGameStore((state) => state.setGame)

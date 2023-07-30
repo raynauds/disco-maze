@@ -1,20 +1,24 @@
 import { useEffect, useRef } from "react"
-import { useLastDanceMovePerformed, usePlayers } from "../stores/game.store"
+import { useLastDanceMoveCollected, useLastDanceMovePerformed, usePlayers } from "../stores/game.store"
 import { DEFAULT_AUTO_CLOSE_MS, useOpenModal } from "../modals/modal.store"
-import { LastDanceMovePerformed } from "../rune/logic"
+import { LastDanceMoveCollected, LastDanceMovePerformed } from "../rune/logic"
 
 export const useDanceMoveHandler = () => {
-  const lastDanceMovePerformed = useLastDanceMovePerformed()
   const openModal = useOpenModal()
-  const lastMovePerformedHandled = useRef<LastDanceMovePerformed | null>(null)
   const players = usePlayers()
+
+  const lastDanceMoveCollected = useLastDanceMoveCollected()
+  const lastMovePerformedHandled = useRef<LastDanceMovePerformed | null>(null)
+
+  const lastDanceMovePerformed = useLastDanceMovePerformed()
+  const lastMoveCollectedHandled = useRef<LastDanceMoveCollected | null>(null)
 
   useEffect(() => {
     if (!lastDanceMovePerformed) {
       return
     }
 
-    const player = players[lastDanceMovePerformed.performancPlayerId]
+    const player = players[lastDanceMovePerformed.performancePlayerId]
     if (!player) {
       return
     }
@@ -40,6 +44,42 @@ export const useDanceMoveHandler = () => {
         autoCloseMs: DEFAULT_AUTO_CLOSE_MS,
       },
     )
+
     lastMovePerformedHandled.current = lastDanceMovePerformed
   }, [lastDanceMovePerformed, openModal, players])
+
+  useEffect(() => {
+    if (!lastDanceMoveCollected) {
+      return
+    }
+
+    const player = players[lastDanceMoveCollected.collectingPlayerId]
+    if (!player) {
+      return
+    }
+
+    if (
+      lastDanceMoveCollected.moveName === lastMoveCollectedHandled.current?.moveName &&
+      lastDanceMoveCollected.collectingPlayerId === lastMoveCollectedHandled.current?.collectingPlayerId
+    ) {
+      return
+    }
+
+    openModal(
+      {
+        type: "dance-performed",
+        props: {
+          moveName: lastDanceMoveCollected.moveName,
+          userName: player.displayName,
+          userProfilePictureSrc: player.avatarUrl,
+          type: "move-learned",
+        },
+      },
+      {
+        autoCloseMs: DEFAULT_AUTO_CLOSE_MS,
+      },
+    )
+
+    lastMoveCollectedHandled.current = lastDanceMoveCollected
+  }, [lastDanceMoveCollected, lastDanceMovePerformed, openModal, players])
 }
