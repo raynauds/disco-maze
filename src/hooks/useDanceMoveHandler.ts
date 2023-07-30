@@ -3,7 +3,7 @@ import { useLastDanceMovePerformed, usePlayers } from "../stores/game.store"
 import { DEFAULT_AUTO_CLOSE_MS, useOpenModal } from "../modals/modal.store"
 import { LastDanceMovePerformed } from "../rune/logic"
 
-export const useOnMovePerformed = () => {
+export const useDanceMoveHandler = () => {
   const lastDanceMovePerformed = useLastDanceMovePerformed()
   const openModal = useOpenModal()
   const lastMovePerformedHandled = useRef<LastDanceMovePerformed | null>(null)
@@ -33,11 +33,11 @@ export const useOnMovePerformed = () => {
           moveName: lastDanceMovePerformed.moveName,
           userName: player.displayName,
           userProfilePictureSrc: player.avatarUrl,
-          type: "move-learned",
+          type: lastDanceMovePerformed.type,
         },
       },
       {
-        // autoCloseMs: DEFAULT_AUTO_CLOSE_MS,
+        autoCloseMs: DEFAULT_AUTO_CLOSE_MS,
       },
     )
     lastMovePerformedHandled.current = lastDanceMovePerformed

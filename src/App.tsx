@@ -5,13 +5,13 @@ import { LoadingScreen } from "./components/screens/LoadingScreen"
 import { useResponsive } from "./stores/dimensions.store"
 import { useGame, useSetGameState } from "./stores/game.store"
 import { ModalProvider } from "./modals/modal.provider"
-import { useOnMovePerformed } from "./hooks/useOnMovePerformed"
+import { useDanceMoveHandler } from "./hooks/useDanceMoveHandler"
 
 function App() {
   const game = useGame()
   const setGame = useSetGameState()
   useResponsive()
-  useOnMovePerformed()
+  useDanceMoveHandler()
 
   useEffect(() => {
     Rune.initClient({

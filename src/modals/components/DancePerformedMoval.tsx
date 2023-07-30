@@ -1,12 +1,13 @@
 import { styled } from "styled-components"
-import { MoveName } from "../../rune/logic"
+import { MoveName, MovePerformedType } from "../../rune/logic"
 import { useTranslations } from "../../translations/translations"
 import { theme } from "../../theme/theme"
 import { images } from "../../data/images"
 import { useDimensions } from "../../stores/dimensions.store"
-import { UIImage } from "../../components/ui/UIImage"
+import { UIImage, UIPixelatedImage } from "../../components/ui/UIImage"
+import { useMemo } from "react"
 
-export type DancePerformedMovalType = "move-learned" | "move-performed-no-effect" | "move-performed-please-bouncer"
+export type DancePerformedMovalType = "move-learned" | MovePerformedType
 
 export type DancePerformedMovalProps = {
   type: DancePerformedMovalType
@@ -15,21 +16,34 @@ export type DancePerformedMovalProps = {
   moveName: MoveName
 }
 
-export const DancePerformedMoval = ({ userName, userProfilePictureSrc, moveName }: DancePerformedMovalProps) => {
+export const DancePerformedMoval = ({ type, userName, userProfilePictureSrc, moveName }: DancePerformedMovalProps) => {
   const { t } = useTranslations()
   const { availableWidth } = useDimensions()
   const fontSizeRatio = availableWidth / 375
 
+  const bouncerComment = useMemo(() => {
+    return t.dancePerformedModal.info[type]()
+  }, [t, type])
+
+  const displayBouncerAvatar = type === "bouncer-pleased" || type === "bouncer-not-impressed"
+
   return (
     <Root>
       <TextContainer>
-        <UserInfoContainer>
-          <ProfilePictureContainer $availableWidth={availableWidth}>
-            <UIImage src={images.fogOfWar || userProfilePictureSrc} alt={`user: ${userName}`} />
-          </ProfilePictureContainer>
+        <SectionContainer>
+          <UserAvatarContainer $availableWidth={availableWidth}>
+            <UIImage src={userProfilePictureSrc || images.fogOfWar} alt={`user: ${userName}`} />
+          </UserAvatarContainer>
           <UserName $fontSizeRatio={fontSizeRatio}>{userName}</UserName>
-        </UserInfoContainer>
-        <TypeInfo>{}</TypeInfo>
+        </SectionContainer>
+        <SectionContainer>
+          {displayBouncerAvatar ? (
+            <BouncerAvatarContainer $availableWidth={availableWidth}>
+              <UIPixelatedImage src={images.bouncer} alt="bouncer" />
+            </BouncerAvatarContainer>
+          ) : null}
+          <TypeInfo $fontSizeRatio={fontSizeRatio}>{bouncerComment}</TypeInfo>
+        </SectionContainer>
         <Title $fontSizeRatio={fontSizeRatio}>{t.moves[moveName]}</Title>
       </TextContainer>
       <MoveImage src={images.moves.large[moveName]} alt={`move: ${moveName}`} />
@@ -51,25 +65,42 @@ const TextContainer = styled.div`
   padding-right: ${theme.spacing(2)};
 `
 
-const UserInfoContainer = styled.div`
+const SectionContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: ${theme.spacing(1)};
 `
 
-const ProfilePictureContainer = styled.div<{ $availableWidth: number }>`
-  width: ${(props) => props.$availableWidth * 0.1}px;
-  height: ${(props) => props.$availableWidth * 0.1}px;
-  min-width: ${(props) => props.$availableWidth * 0.1}px;
-  min-height: ${(props) => props.$availableWidth * 0.1}px;
+const userAvatarSizeRatio = 0.05
+const UserAvatarContainer = styled.div<{ $availableWidth: number }>`
+  width: ${(props) => props.$availableWidth * userAvatarSizeRatio}px;
+  height: ${(props) => props.$availableWidth * userAvatarSizeRatio}px;
+  min-width: ${(props) => props.$availableWidth * userAvatarSizeRatio}px;
+  min-height: ${(props) => props.$availableWidth * userAvatarSizeRatio}px;
   margin-right: ${(props) => props.$availableWidth * 0.02}px;
   border-radius: 50%;
   overflow: hidden;
 `
 
-const UserName = styled.h2<{ $fontSizeRatio: number }>`
-  font-family: ${theme.typography.h2.font};
-  font-size: ${(props) => props.$fontSizeRatio * 24}px;
+const bouncerAvatarSizeRatio = 0.1
+const BouncerAvatarContainer = styled.div<{ $availableWidth: number }>`
+  width: ${(props) => props.$availableWidth * bouncerAvatarSizeRatio}px;
+  height: ${(props) => props.$availableWidth * bouncerAvatarSizeRatio}px;
+  min-width: ${(props) => props.$availableWidth * bouncerAvatarSizeRatio}px;
+  min-height: ${(props) => props.$availableWidth * bouncerAvatarSizeRatio}px;
+  margin-right: ${(props) => props.$availableWidth * 0.02}px;
+  border-radius: 50%;
+  overflow: hidden;
+`
+
+const UserName = styled.p<{ $fontSizeRatio: number }>`
+  font-size: ${(props) => props.$fontSizeRatio * 16}px;
+  text-align: center;
+`
+
+const TypeInfo = styled.p<{ $fontSizeRatio: number }>`
+  font-size: ${(props) => props.$fontSizeRatio * 20}px;
   text-align: center;
 `
 

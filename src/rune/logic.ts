@@ -50,7 +50,18 @@ export type MovePerformance = {
   isPerformed: boolean
 }
 
-export type LastDanceMovePerformed = { moveName: MoveName; performancPlayerId: string; performanceTimeSeconds: number }
+export type MovePerformedType = "no-effect" | "bouncer-pleased" | "bouncer-not-impressed"
+
+export type LastDanceMovePerformed = {
+  moveName: MoveName
+  performancPlayerId: string
+  performanceTimeSeconds: number
+  type: MovePerformedType
+}
+
+export type LastDanceMoveCollected = {
+  moveName: MoveName
+}
 
 export type LevelData = {
   level: number
@@ -80,6 +91,7 @@ export type GameState = {
   levels: LevelData[]
   currentLevelIndex: number
   lastDanceMovePerformed: LastDanceMovePerformed | null
+  lastDanceMoveCollected: LastDanceMoveCollected | null
 }
 
 type GameActions = {
@@ -126,6 +138,7 @@ export const emptyGameState: GameState = {
   levels: [],
   currentLevelIndex: 0,
   lastDanceMovePerformed: null,
+  lastDanceMoveCollected: null,
 }
 
 /*********************************************************************************************************************
@@ -639,6 +652,33 @@ const getGameOverPlayers = ({
   )
 }
 
+const getMovePerformedType = ({
+  move,
+  player,
+  bouncer,
+}: {
+  move: MoveName
+  player: PlayerData
+  bouncer: LevelData["bouncer"]
+}): MovePerformedType => {
+  const distanceToBouncer =
+    Math.abs(player.position.x - bouncer.position.x) + Math.abs(player.position.y - bouncer.position.y)
+  const isNextToBouncer = distanceToBouncer <= 1
+
+  if (!isNextToBouncer) {
+    return "no-effect"
+  }
+
+  const nextMoveRequired = bouncer.movesRequired.find((moveRequired) => {
+    return !moveRequired.isPerformed
+  })
+  if (!nextMoveRequired || nextMoveRequired.id !== move) {
+    return "bouncer-not-impressed"
+  }
+
+  return "bouncer-pleased"
+}
+
 /*********************************************************************************************************************
  * RUNE LOGIC
  *********************************************************************************************************************/
@@ -719,6 +759,7 @@ Rune.initLogic({
       levels,
       currentLevelIndex: 0,
       lastDanceMovePerformed: null,
+      lastDanceMoveCollected: null,
     }
 
     return game
@@ -809,32 +850,32 @@ Rune.initLogic({
         throw Rune.invalidAction()
       }
 
-      game.lastDanceMovePerformed = {
-        moveName: move,
-        performancPlayerId: playerId,
-        performanceTimeSeconds: Rune.gameTimeInSeconds(),
-      }
-
       const { bouncer } = game.levels[game.currentLevelIndex]
 
-      if (!bouncer || !bouncer.isFound) {
-        return
-      }
-
-      const distanceToBouncer =
-        Math.abs(player.position.x - bouncer.position.x) + Math.abs(player.position.y - bouncer.position.y)
-      if (distanceToBouncer > 1) {
-        return
-      }
+      const movePerformedType = getMovePerformedType({
+        move,
+        player,
+        bouncer,
+      })
 
       const nextMoveRequired = bouncer.movesRequired.find((moveRequired) => {
         return !moveRequired.isPerformed
       })
-      if (!nextMoveRequired || nextMoveRequired.id !== move) {
-        return
+
+      if (movePerformedType === "bouncer-pleased" && nextMoveRequired) {
+        nextMoveRequired.isPerformed = true
       }
 
-      nextMoveRequired.isPerformed = true
+      game.lastDanceMovePerformed = {
+        moveName: move,
+        performancPlayerId: playerId,
+        performanceTimeSeconds: Rune.gameTimeInSeconds(),
+        type: movePerformedType,
+      }
+
+      if (movePerformedType !== "bouncer-pleased") {
+        return
+      }
 
       const areAllMovesPerformed = bouncer.movesRequired.every((moveRequired) => {
         return moveRequired.isPerformed

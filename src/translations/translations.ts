@@ -15,12 +15,28 @@ const en = {
   dancePerformedModal: {
     info: {
       "move-learned": () => "new move!",
-      "move-performed-no-effect": () => {
-        const comments = ["awesome!", "great!", "impressive!", "groovy!"]
+      "no-effect": () => "dancing like no one's watching",
+      "bouncer-not-impressed": () => {
+        const comments = ["« is that all? »", "« come again? »", "« got anything else? »", "« cool, but unexpected »"]
         const randomComment = getRandomItemFromArray(comments) || comments[0]
         return randomComment
       },
-      "move-performed-please-bouncer": () => "",
+      "bouncer-pleased": () => {
+        const comments = [
+          "« awesome! »",
+          "« great! »",
+          "« impressive! »",
+          "« groovy! »",
+          "« neat! »",
+          "« funky! »",
+          "« brilliant! »",
+          "« insane! »",
+          "« nice! »",
+          "« cool! »",
+        ]
+        const randomComment = getRandomItemFromArray(comments) || comments[0]
+        return randomComment
+      },
     },
   },
 }
