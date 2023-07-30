@@ -1,4 +1,4 @@
-import { MoveName } from "../rune/logic"
+import { MoveName, getRandomItemFromArray } from "../rune/logic"
 
 const moves: Record<MoveName, string> = {
   "front-and-back": "front and back",
@@ -12,7 +12,17 @@ const moves: Record<MoveName, string> = {
 const en = {
   title: "Disco Maze",
   moves,
-  performedBy: ({ userName }: { userName: string }) => `performed by ${userName}`,
+  dancePerformedModal: {
+    info: {
+      "move-learned": () => "new move!",
+      "move-performed-no-effect": () => {
+        const comments = ["awesome!", "great!", "impressive!", "groovy!"]
+        const randomComment = getRandomItemFromArray(comments) || comments[0]
+        return randomComment
+      },
+      "move-performed-please-bouncer": () => "",
+    },
+  },
 }
 
 export const useTranslations = () => {

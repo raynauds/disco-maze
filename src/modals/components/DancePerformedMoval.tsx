@@ -4,13 +4,18 @@ import { useTranslations } from "../../translations/translations"
 import { theme } from "../../theme/theme"
 import { images } from "../../data/images"
 import { useDimensions } from "../../stores/dimensions.store"
+import { UIImage } from "../../components/ui/UIImage"
+
+export type DancePerformedMovalType = "move-learned" | "move-performed-no-effect" | "move-performed-please-bouncer"
 
 export type DancePerformedMovalProps = {
+  type: DancePerformedMovalType
   userName: string
+  userProfilePictureSrc: string
   moveName: MoveName
 }
 
-export const DancePerformedMoval = ({ userName, moveName }: DancePerformedMovalProps) => {
+export const DancePerformedMoval = ({ userName, userProfilePictureSrc, moveName }: DancePerformedMovalProps) => {
   const { t } = useTranslations()
   const { availableWidth } = useDimensions()
   const fontSizeRatio = availableWidth / 375
@@ -18,10 +23,16 @@ export const DancePerformedMoval = ({ userName, moveName }: DancePerformedMovalP
   return (
     <Root>
       <TextContainer>
+        <UserInfoContainer>
+          <ProfilePictureContainer $availableWidth={availableWidth}>
+            <UIImage src={images.fogOfWar || userProfilePictureSrc} alt={`user: ${userName}`} />
+          </ProfilePictureContainer>
+          <UserName $fontSizeRatio={fontSizeRatio}>{userName}</UserName>
+        </UserInfoContainer>
+        <TypeInfo>{}</TypeInfo>
         <Title $fontSizeRatio={fontSizeRatio}>{t.moves[moveName]}</Title>
-        <PerformedBy $fontSizeRatio={fontSizeRatio}>{t.performedBy({ userName })}</PerformedBy>
       </TextContainer>
-      <MoveImage src={images.moves.large[moveName]} />
+      <MoveImage src={images.moves.large[moveName]} alt={`move: ${moveName}`} />
     </Root>
   )
 }
@@ -40,14 +51,31 @@ const TextContainer = styled.div`
   padding-right: ${theme.spacing(2)};
 `
 
-const Title = styled.h2<{ $fontSizeRatio: number }>`
+const UserInfoContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
+const ProfilePictureContainer = styled.div<{ $availableWidth: number }>`
+  width: ${(props) => props.$availableWidth * 0.1}px;
+  height: ${(props) => props.$availableWidth * 0.1}px;
+  min-width: ${(props) => props.$availableWidth * 0.1}px;
+  min-height: ${(props) => props.$availableWidth * 0.1}px;
+  margin-right: ${(props) => props.$availableWidth * 0.02}px;
+  border-radius: 50%;
+  overflow: hidden;
+`
+
+const UserName = styled.h2<{ $fontSizeRatio: number }>`
   font-family: ${theme.typography.h2.font};
-  font-size: ${(props) => props.$fontSizeRatio * 48}px;
+  font-size: ${(props) => props.$fontSizeRatio * 24}px;
   text-align: center;
 `
 
-const PerformedBy = styled.p<{ $fontSizeRatio: number }>`
-  font-size: ${(props) => props.$fontSizeRatio * 14}px;
+const Title = styled.h2<{ $fontSizeRatio: number }>`
+  font-family: ${theme.typography.h2.font};
+  font-size: ${(props) => props.$fontSizeRatio * 48}px;
   text-align: center;
 `
 
