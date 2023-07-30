@@ -7,7 +7,7 @@ import { GameInformation } from "../GameInformation"
 import { Maze } from "../Maze"
 import { MovesInventory } from "../MovesInventory"
 import { Timer } from "../Timer"
-import { useOpenModal } from "../../modals/modal.store"
+import { DEFAULT_AUTO_CLOSE_MS, useOpenModal } from "../../modals/modal.store"
 
 export const HomeScreen = () => {
   const { availableWidth } = useDimensions()
@@ -23,16 +23,39 @@ export const HomeScreen = () => {
           <Timer />
           <button
             onClick={() =>
-              openModal({
-                type: "dance-performed",
-                props: {
-                  moveName: "roll-the-wrists",
-                  userName: "John Doe",
+              openModal(
+                {
+                  type: "dance-performed",
+                  props: {
+                    moveName: "roll-the-wrists",
+                    userName: "John Doe",
+                  },
                 },
-              })
+                {
+                  autoCloseMs: DEFAULT_AUTO_CLOSE_MS,
+                },
+              )
             }
           >
             open modal
+          </button>
+          <button
+            onClick={() =>
+              openModal(
+                {
+                  type: "dance-performed",
+                  props: {
+                    moveName: "the-bump",
+                    userName: "John Doe",
+                  },
+                },
+                {
+                  autoCloseMs: DEFAULT_AUTO_CLOSE_MS,
+                },
+              )
+            }
+          >
+            open toher modal
           </button>
         </TopSectionContainer>
         <MiddleSectionContainer>

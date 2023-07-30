@@ -1,26 +1,32 @@
 import { create } from "zustand"
 import { ModalConfig } from "./modal.types"
 
-const MODAL_CLOSE_DELAY_MS = 3000
+export const DEFAULT_AUTO_CLOSE_MS = 2500
+
+type OpenModalOptions = {
+  autoCloseMs?: number
+}
 
 type ModalStoreState = {
   modal: ModalConfig | null
   isVisible: boolean
-  openModal: (modal: ModalConfig) => void
+  openModal: (modal: ModalConfig, options?: OpenModalOptions) => void
   closeModal: () => void
 }
 
 const useModalStore = create<ModalStoreState>()((set) => ({
   modal: null,
   isVisible: false,
-  openModal: (modal) => {
+  openModal: (modal, options) => {
     set({ modal, isVisible: true })
+    if (options?.autoCloseMs) {
+      setTimeout(() => {
+        set({ isVisible: false })
+      }, options.autoCloseMs)
+    }
   },
   closeModal: () => {
     set({ isVisible: false })
-    setTimeout(() => {
-      set({ modal: null })
-    }, MODAL_CLOSE_DELAY_MS)
   },
 }))
 

@@ -4,8 +4,6 @@ import { useTranslations } from "../../translations/translations"
 import { theme } from "../../theme/theme"
 import { images } from "../../data/images"
 import { useDimensions } from "../../stores/dimensions.store"
-import { useEffect } from "react"
-import { useCloseModal } from "../modal.store"
 
 export type DancePerformedMovalProps = {
   userName: string
@@ -13,20 +11,9 @@ export type DancePerformedMovalProps = {
 }
 
 export const DancePerformedMoval = ({ userName, moveName }: DancePerformedMovalProps) => {
-  const closeModal = useCloseModal()
   const { t } = useTranslations()
   const { availableWidth } = useDimensions()
   const fontSizeRatio = availableWidth / 375
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      closeModal()
-    }, 3000)
-
-    return () => {
-      clearTimeout(timeout)
-    }
-  })
 
   return (
     <Root>
