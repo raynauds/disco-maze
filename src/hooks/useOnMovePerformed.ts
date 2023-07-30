@@ -12,13 +12,14 @@ export const useOnMovePerformed = () => {
     if (!lastDanceMovePerformed) {
       return
     }
+
     if (
       lastDanceMovePerformed.moveName === lastMovePerformedHandled.current?.moveName &&
       lastDanceMovePerformed.performanceTimeSeconds === lastMovePerformedHandled.current?.performanceTimeSeconds
     ) {
       return
     }
-    console.log("open modal")
+
     openModal(
       {
         type: "dance-performed",

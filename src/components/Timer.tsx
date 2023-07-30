@@ -31,13 +31,13 @@ export const Timer = () => {
     <Root $availableWidth={availableWidth}>
       <LevelIndicatorsContainer>
         {createArray(MAX_LEVEL).map((_, index) => {
-          return (
-            <LevelIndicator
-              key={index}
-              src={game.currentLevelIndex > index ? images.radioFilledGreen : images.radioEmpty}
-              $availableSpace={availableSpaceAroundMaze}
-            />
-          )
+          const src =
+            game.currentLevelIndex > index
+              ? images.radioFilledGreen
+              : game.currentLevelIndex === index
+              ? images.radioFilledOrange
+              : images.radioEmpty
+          return <LevelIndicator key={index} src={src} $availableSpace={availableSpaceAroundMaze} />
         })}
       </LevelIndicatorsContainer>
 

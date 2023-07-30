@@ -47,6 +47,7 @@ export const images = {
   buttonPressed: "src/assets/images/button_pressed.png",
   radioEmpty: "src/assets/images/radio_empty.png",
   radioFilledGreen: "src/assets/images/radio_filled_green.png",
+  radioFilledOrange: "src/assets/images/radio_filled_orange.png",
   walls: {
     top: "src/assets/images/wall_top.png",
     right: "src/assets/images/wall_right.png",
