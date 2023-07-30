@@ -45,5 +45,8 @@ const Root = styled.div<{ $availableWidth: number; $numberOfItems: number }>`
 `
 
 const MoveContainer = styled.div<{ $availableWidth: number }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   padding: ${(props) => props.$availableWidth * moveContainerPaddingFraction}px;
 `

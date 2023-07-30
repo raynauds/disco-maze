@@ -6,7 +6,7 @@ import { theme } from "../../theme/theme"
 import { UIPixelatedImage } from "./UIImage"
 
 export const UIDoor = () => {
-  const level = useCurrentLevel()
+  const { level } = useCurrentLevel()
   const { cellWidth } = useDimensions()
 
   const isDoorOpen = level.bouncer.isSatisfiedWithYourMoves

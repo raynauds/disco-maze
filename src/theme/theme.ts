@@ -20,6 +20,7 @@ export const theme = {
       light: "#cfcfcfcf",
       main: "#999999",
     },
+    fogOfWar: "#000000",
   },
   spacing: (factor: number) => `${defaultSpacing * factor}px`,
   ratio: {

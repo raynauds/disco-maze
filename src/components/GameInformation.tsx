@@ -9,7 +9,7 @@ import { UIMove } from "./ui/UIMove"
 
 export const GameInformation = () => {
   const { availableWidth, availableSpaceAroundMaze } = useDimensions()
-  const level = useCurrentLevel()
+  const { level } = useCurrentLevel()
   const { bouncer, move } = level
   const movesDisplayedInDialog = bouncer.isFound ? bouncer.movesRequired : undefined
 

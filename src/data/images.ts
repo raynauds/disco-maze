@@ -1,5 +1,7 @@
 import { MoveName } from "../rune/logic"
 
+import bouncer from "../assets/images/bouncer.png"
+
 const moveImagesSmall: Record<MoveName, string> = {
   "front-and-back": "src/assets/images/move_1.png",
   "the-turn-around": "src/assets/images/move_2.png",
@@ -25,7 +27,7 @@ export const images = {
     "src/assets/images/dancer_3.png",
     "src/assets/images/dancer_4.png",
   ],
-  bouncer: "src/assets/images/bouncer.png",
+  bouncer,
   doorClosed: "src/assets/images/door_closed.png",
   doorOpen: "src/assets/images/door_open.png",
   moves: {

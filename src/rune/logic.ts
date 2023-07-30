@@ -730,21 +730,6 @@ Rune.initLogic({
         return !isPlayersPositionOrNeighbor
       })
 
-      console.log("*****************")
-      console.log(`* level ${levelIndex} *`)
-      console.log("*****************")
-      console.log(
-        JSON.stringify(
-          {
-            startingPlayersPosition,
-            playersPositionOrNeighbors,
-            availablePositionsBucket,
-          },
-          null,
-          2,
-        ),
-      )
-
       const { maze, bouncerPosition, doorPosition } = MUTATION_WARNING_generateMazeWithBouncerAndDoor({
         positionsBucket: availablePositionsBucket,
       })

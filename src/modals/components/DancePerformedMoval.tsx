@@ -1,11 +1,11 @@
-import { styled } from "styled-components"
-import { MoveName, MovePerformedType } from "../../rune/logic"
-import { useTranslations } from "../../translations/translations"
-import { theme } from "../../theme/theme"
-import { images } from "../../data/images"
-import { useDimensions } from "../../stores/dimensions.store"
-import { UIImage, UIPixelatedImage } from "../../components/ui/UIImage"
 import { useMemo } from "react"
+import { styled } from "styled-components"
+import { UIImage, UIPixelatedImage } from "../../components/ui/UIImage"
+import { images } from "../../data/images"
+import { MoveName, MovePerformedType } from "../../rune/logic"
+import { useDimensions } from "../../stores/dimensions.store"
+import { theme } from "../../theme/theme"
+import { useTranslations } from "../../translations/translations"
 
 export type DancePerformedMovalType = "move-learned" | MovePerformedType
 
@@ -69,10 +69,10 @@ const SectionContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: ${theme.spacing(1)};
+  margin-bottom: ${theme.spacing(2)};
 `
 
-const userAvatarSizeRatio = 0.05
+const userAvatarSizeRatio = 0.08
 const UserAvatarContainer = styled.div<{ $availableWidth: number }>`
   width: ${(props) => props.$availableWidth * userAvatarSizeRatio}px;
   height: ${(props) => props.$availableWidth * userAvatarSizeRatio}px;

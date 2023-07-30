@@ -1,18 +1,19 @@
 import { useCallback, useEffect, useState } from "react"
 import { styled } from "styled-components"
 import { DELAY_BETWEEN_MOVES_MS, Direction, checkIfCanMove } from "../rune/logic"
-import { useGame, useYourPlayerId } from "../stores/game.store"
+import { useCurrentLevel, useGame, useYourPlayerId } from "../stores/game.store"
 import { UIControlButton } from "./ui/UIControlButton"
 
 export const GameControls = () => {
   const game = useGame()
   const yourPlayerId = useYourPlayerId()
+  const { isChangingLevel } = useCurrentLevel()
 
   const [lastMoveTimestamp, setLastMoveTimestamp] = useState(0)
 
   const move = useCallback(
     (direction: Direction) => {
-      if (!yourPlayerId) {
+      if (!yourPlayerId || isChangingLevel) {
         return
       }
 
@@ -33,7 +34,7 @@ export const GameControls = () => {
         setLastMoveTimestamp(Date.now())
       } catch {}
     },
-    [game, yourPlayerId, lastMoveTimestamp],
+    [isChangingLevel, yourPlayerId, lastMoveTimestamp, game],
   )
 
   useEffect(() => {

@@ -1,22 +1,25 @@
-import { useMemo } from "react"
+import { animated, useSpring } from "@react-spring/web"
+import { useCallback, useEffect, useMemo } from "react"
 import { styled } from "styled-components"
 import { MAZE_SIZE, getVisibleCells } from "../rune/logic"
 import { MAZE_HORIZONTAL_MARGIN_PX, useDimensions } from "../stores/dimensions.store"
-import { useCurrentLevel, useGame, useYourPlayerId } from "../stores/game.store"
+import { LEVEL_TRANSITION_MS, useCurrentLevel, useGame, useYourPlayerId } from "../stores/game.store"
+import { theme } from "../theme/theme"
 import { UIBouncer } from "./ui/UIBouncer"
-import { UIDancer } from "./ui/UIDancer"
-import { UIDoor } from "./ui/UIDoor"
-import { UIMazeCell } from "./ui/UIMazeCell"
-import { UIFogOfWar } from "./ui/UIFogOfWar"
-import { UIDancerContainer } from "./ui/UIDancerContainer"
 import { UICollectibleMove } from "./ui/UICollectibleMove"
+import { UIDancer } from "./ui/UIDancer"
+import { UIDancerContainer } from "./ui/UIDancerContainer"
+import { UIDoor } from "./ui/UIDoor"
+import { UIFogOfWar } from "./ui/UIFogOfWar"
+import { UIMazeCell } from "./ui/UIMazeCell"
 
 export const Maze = () => {
   const { availableWidth, cellWidth } = useDimensions()
   const yourPlayerId = useYourPlayerId()
   const game = useGame()
   const { players } = game
-  const level = useCurrentLevel()
+
+  const { level, isChangingLevel } = useCurrentLevel()
   const { maze, bouncer, door, move } = level
   const cells = maze.flat()
 
@@ -45,7 +48,9 @@ export const Maze = () => {
     })
   }, [level, players, yourPlayerId])
 
-  const isBouncerHidden = !bouncer.isFound || bouncer.isSatisfiedWithYourMoves
+  const isBouncerHidden = bouncer.isSatisfiedWithYourMoves || isChangingLevel
+  const isMoveHidden = move.isCollected || isChangingLevel
+  const arePlayersHidden = isChangingLevel
 
   return (
     <Root>
@@ -62,7 +67,7 @@ export const Maze = () => {
           })}
         </CellsContainer>
 
-        {bouncer && !isBouncerHidden ? (
+        {isBouncerHidden ? null : (
           <ElementContainer
             $size={cellWidth}
             $xAbsolute={bouncer.position.x * cellWidth}
@@ -70,7 +75,7 @@ export const Maze = () => {
           >
             <UIBouncer />
           </ElementContainer>
-        ) : null}
+        )}
 
         {door ? (
           <ElementContainer
@@ -82,7 +87,7 @@ export const Maze = () => {
           </ElementContainer>
         ) : null}
 
-        {move && !move.isCollected ? (
+        {isMoveHidden ? null : (
           <ElementContainer
             $size={cellWidth}
             $xAbsolute={move.position.x * cellWidth}
@@ -90,23 +95,25 @@ export const Maze = () => {
           >
             <UICollectibleMove id={move.id} />
           </ElementContainer>
-        ) : null}
+        )}
 
-        {dancers.map((dancer) => {
-          if (dancer.player.hasFoundDoor) {
-            return null
-          }
-          return (
-            <UIDancerContainer
-              key={dancer.playerId}
-              cellWidth={cellWidth}
-              xAbsolute={dancer.xAbsolute}
-              yAbsolute={dancer.yAbsolute}
-            >
-              <UIDancer playerId={dancer.playerId} />
-            </UIDancerContainer>
-          )
-        })}
+        {arePlayersHidden
+          ? null
+          : dancers.map((dancer) => {
+              if (dancer.player.hasFoundDoor) {
+                return null
+              }
+              return (
+                <UIDancerContainer
+                  key={dancer.playerId}
+                  cellWidth={cellWidth}
+                  xAbsolute={dancer.xAbsolute}
+                  yAbsolute={dancer.yAbsolute}
+                >
+                  <UIDancer playerId={dancer.playerId} />
+                </UIDancerContainer>
+              )
+            })}
 
         <CellsContainer $cellWidth={cellWidth}>
           {cells.map((_, index) => {
@@ -119,9 +126,53 @@ export const Maze = () => {
             return <UIFogOfWar key={index} />
           })}
         </CellsContainer>
+
+        <LevelChangeOverlay />
       </MazeArea>
     </Root>
   )
+}
+
+const LevelChangeOverlay = () => {
+  const { isChangingLevel } = useCurrentLevel()
+  const [spring, api] = useSpring(() => ({
+    opacity: 0,
+  }))
+
+  const transitionBetweenLevels = useCallback(() => {
+    const totalAnimationDurationMs = LEVEL_TRANSITION_MS
+    const delayBetweenAnimationsMs = 300
+    const singleAnimationDurationMs = totalAnimationDurationMs / 2 - delayBetweenAnimationsMs
+
+    api.start({
+      opacity: 1,
+      config: {
+        duration: singleAnimationDurationMs,
+      },
+    })
+
+    const timeout = setTimeout(() => {
+      api.start({
+        opacity: 0,
+        config: {
+          duration: singleAnimationDurationMs,
+        },
+      })
+    }, singleAnimationDurationMs + delayBetweenAnimationsMs)
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [api])
+
+  useEffect(() => {
+    if (!isChangingLevel) {
+      return
+    }
+    transitionBetweenLevels()
+  }, [isChangingLevel, transitionBetweenLevels])
+
+  return <Overlay style={{ opacity: spring.opacity }} />
 }
 
 const Root = styled.div`
@@ -163,4 +214,10 @@ const CellsContainer = styled.div<{ $cellWidth: number }>`
   width: ${(props) => props.$cellWidth * MAZE_SIZE};
   height: ${(props) => props.$cellWidth * MAZE_SIZE};
   border: 1px solid lightgrey;
+`
+
+const Overlay = styled(animated.div)`
+  position: absolute;
+  inset: 0;
+  background-color: ${theme.palette.fogOfWar};
 `
