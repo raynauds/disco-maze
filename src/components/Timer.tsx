@@ -35,7 +35,7 @@ export const Timer = () => {
             game.currentLevelIndex > index
               ? images.radioFilledGreen
               : game.currentLevelIndex === index
-              ? images.radioFilledOrange
+              ? images.radioFilledGrey
               : images.radioEmpty
           return <LevelIndicator key={index} src={src} $availableSpace={availableSpaceAroundMaze} />
         })}

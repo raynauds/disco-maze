@@ -11,6 +11,7 @@ export const UIMazeCell = ({ cell }: UIMazeCellProps) => {
   const imageSource = useMemo(() => {
     const { top, right, bottom, left } = cell
     const pattern = [top, right, bottom, left].map((hasWall) => (hasWall ? 1 : 0)).join("")
+    if (pattern === "0000") return images.walls.none
     if (pattern === "0001") return images.walls.left
     if (pattern === "0010") return images.walls.bottom
     if (pattern === "0011") return images.walls.bottomLeft

@@ -47,8 +47,9 @@ export const images = {
   buttonPressed: "src/assets/images/button_pressed.png",
   radioEmpty: "src/assets/images/radio_empty.png",
   radioFilledGreen: "src/assets/images/radio_filled_green.png",
-  radioFilledOrange: "src/assets/images/radio_filled_orange.png",
+  radioFilledGrey: "src/assets/images/radio_filled_grey.png",
   walls: {
+    none: "src/assets/images/wall_none.png",
     top: "src/assets/images/wall_top.png",
     right: "src/assets/images/wall_right.png",
     bottom: "src/assets/images/wall_bottom.png",

@@ -69,6 +69,7 @@ export type LevelData = {
     position: Position
     isCollected: boolean
   }
+  startingPlayersPosition: Position
 }
 
 export type GameState = {
@@ -93,7 +94,7 @@ declare global {
 /*********************************************************************************************************************
  * DATA
  *********************************************************************************************************************/
-export const MAZE_SIZE = 4
+export const MAZE_SIZE = 9
 
 export const MAX_LEVEL = 8
 
@@ -615,23 +616,12 @@ export const MUTATION_WARNING_generateBouncerDoorAndMove = ({
 }
 
 export const goToNextLevel = (game: GameState) => {
-  const nextLevelIndex = game.currentLevelIndex + 1
-  const nextLevel = game.levels[nextLevelIndex]
-  const { bouncer, door, move } = nextLevel
-
-  const positionsBucket = createPositionsBucketWithoutTakenPositions({
-    takenPositions: [bouncer.position, door.position, move.position],
-  })
-
   for (const playerId of Object.keys(game.players)) {
     const player = game.players[playerId]
     player.hasFoundDoor = false
-    player.position = MUTATION_WARNING_extractPositionThatDoesNotSeeBouncerOrMove({
-      level: nextLevel,
-      positionsBucket,
-    })
   }
 
+  const nextLevelIndex = game.currentLevelIndex + 1
   game.currentLevelIndex = nextLevelIndex
 }
 
@@ -666,16 +656,31 @@ Rune.initLogic({
     let alreadyFoundMoves: MoveName[] = []
 
     const levels: LevelData[] = []
+    let startingPlayersPosition: Position = {
+      x: Math.floor(Math.random() * MAZE_SIZE),
+      y: Math.floor(Math.random() * MAZE_SIZE),
+    }
 
     for (let levelIndex = 0; levelIndex < MAX_LEVEL; levelIndex++) {
       const positionsBucket = createPositionsBucket()
+      const playersPositionOrNeighbors: Position[] = [
+        startingPlayersPosition,
+        { x: startingPlayersPosition.x - 1, y: startingPlayersPosition.y },
+        { x: startingPlayersPosition.x + 1, y: startingPlayersPosition.y },
+        { x: startingPlayersPosition.x, y: startingPlayersPosition.y - 1 },
+        { x: startingPlayersPosition.x, y: startingPlayersPosition.y + 1 },
+      ]
+      const availablePositionsBucket = positionsBucket.filter((position) => {
+        const isPlayersPositionOrNeighbor = playersPositionOrNeighbors.some((item) => arePositionsEqual(position, item))
+        return !isPlayersPositionOrNeighbor
+      })
 
       const { maze, bouncerPosition, doorPosition } = MUTATION_WARNING_generateMazeWithBouncerAndDoor({
-        positionsBucket,
+        positionsBucket: availablePositionsBucket,
       })
 
       const { bouncer, door, move } = MUTATION_WARNING_generateBouncerDoorAndMove({
-        positionsBucket,
+        positionsBucket: availablePositionsBucket,
         bouncerPosition,
         doorPosition,
         possibleNewMoves: possibleNewMoves.filter((move) => move !== lastMoveSelected),
@@ -692,26 +697,17 @@ Rune.initLogic({
         bouncer,
         door,
         move,
+        startingPlayersPosition,
       })
+
+      startingPlayersPosition = door.position
     }
-
-    const firstLevel = levels[0]
-    const { bouncer, door, move } = firstLevel
-
-    const positionsBucket = createPositionsBucketWithoutTakenPositions({
-      takenPositions: [bouncer.position, door.position, move.position],
-    })
 
     const avatarIndicesBucket = [0, 1, 2, 3]
     for (const playerId of allPlayerIds) {
-      const playerPosition = MUTATION_WARNING_extractPositionThatDoesNotSeeBouncerOrMove({
-        level: firstLevel,
-        positionsBucket,
-      })
-
       players[playerId] = {
         avatarIndex: MUTATION_WARNING_extractRandomItemFromArray(avatarIndicesBucket),
-        position: playerPosition,
+        position: levels[0]?.startingPlayersPosition || { x: 0, y: 0 },
         moves: [],
         hasFoundDoor: false,
       }
@@ -813,7 +809,6 @@ Rune.initLogic({
         throw Rune.invalidAction()
       }
 
-      console.log("update last move performed")
       game.lastDanceMovePerformed = {
         moveName: move,
         performancPlayerId: playerId,
