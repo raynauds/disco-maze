@@ -7,16 +7,16 @@ import { useDimensions } from "../../stores/dimensions.store"
 import { theme } from "../../theme/theme"
 import { useTranslations } from "../../translations/translations"
 
-export type DancePerformedMovalType = "move-learned" | MovePerformedType
+export type DancePerformedModalType = "move-learned" | MovePerformedType
 
-export type DancePerformedMovalProps = {
-  type: DancePerformedMovalType
+export type DancePerformedModalProps = {
+  type: DancePerformedModalType
   userName: string
   userProfilePictureSrc: string
   moveName: MoveName
 }
 
-export const DancePerformedMoval = ({ type, userName, userProfilePictureSrc, moveName }: DancePerformedMovalProps) => {
+export const DancePerformedModal = ({ type, userName, userProfilePictureSrc, moveName }: DancePerformedModalProps) => {
   const { t } = useTranslations()
   const { availableWidth } = useDimensions()
   const fontSizeRatio = availableWidth / 375

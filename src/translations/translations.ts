@@ -12,6 +12,7 @@ const moves: Record<MoveName, string> = {
 const en = {
   title: "Disco Maze",
   moves,
+  ok: "OK",
   dancePerformedModal: {
     info: {
       "move-learned": () => "new move!",

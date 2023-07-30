@@ -1,10 +1,11 @@
+import { animated, useSpring } from "@react-spring/web"
 import { ReactNode, useCallback, useEffect, useRef } from "react"
-import { DancePerformedMoval } from "./components/DancePerformedMoval"
-import { useIsModalVisible, useModal } from "./modal.store"
 import { styled } from "styled-components"
 import { useDimensions } from "../stores/dimensions.store"
-import { animated, useSpring } from "@react-spring/web"
 import { theme } from "../theme/theme"
+import { DancePerformedModal } from "./components/DancePerformedModal"
+import { GameInformationModal } from "./components/GameInformationModal"
+import { useIsModalVisible, useModal } from "./modal.store"
 import { ModalConfig } from "./modal.types"
 
 type ModalProviderProps = {
@@ -67,12 +68,14 @@ type ModalContentProps = {
 const ModalContent = ({ config }: ModalContentProps) => {
   switch (config.type) {
     case "dance-performed":
-      return <DancePerformedMoval {...config.props} />
+      return <DancePerformedModal {...config.props} />
+    case "game-information":
+      return <GameInformationModal />
   }
 }
 
 const Root = styled.div`
-position: relative
+  position: relative;
   width: 100%;
   height: 100%;
 `
@@ -86,7 +89,6 @@ const ModalContainer = styled(animated.div)`
   justify-content: center;
   align-items: center;
   z-index: 100;
-  pointer-events: none;
 `
 
 const ModalContentContainer = styled.div<{
@@ -98,5 +100,4 @@ const ModalContentContainer = styled.div<{
   border: 2px solid ${theme.palette.border.main};
   border-radius: 16px;
   background-color: ${theme.palette.background.light};
-  pointer-events: none;
 `

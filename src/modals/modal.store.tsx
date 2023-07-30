@@ -1,6 +1,6 @@
 import { create } from "zustand"
-import { ModalConfig } from "./modal.types"
 import { DELAY_BETWEEN_DANCES_MS } from "../rune/logic"
+import { ModalConfig } from "./modal.types"
 
 export const DEFAULT_AUTO_CLOSE_MS = DELAY_BETWEEN_DANCES_MS - 500
 

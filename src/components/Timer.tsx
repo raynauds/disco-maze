@@ -25,7 +25,7 @@ export const Timer = () => {
   const timeRemaining = Math.max(MAX_GAME_TIME_SECONDS - gameTimeInSeconds, 0)
   const minutes = Math.floor(timeRemaining / 60)
   const seconds = Math.floor(timeRemaining % 60)
-  const formatedTime = `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`
+  const formatedTime = `${minutes}:${seconds < 10 ? "0" : ""}${seconds} ⌛`
 
   return (
     <Root $availableWidth={availableWidth}>
