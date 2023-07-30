@@ -543,14 +543,28 @@ export const MUTATION_WARNING_generateMazeWithBouncerAndDoor = ({
 
     maze = generateMaze()
 
-    const positionsWith3Walls = maze
+    const positionsWith3WallsInBucket = maze
       .map((row) => {
         return row.filter((cell) => {
+          const isCellInBucket = positionsBucket.some((position) =>
+            arePositionsEqual(position, {
+              x: cell.x,
+              y: cell.y,
+            }),
+          )
+          if (!isCellInBucket) {
+            return false
+          }
           return directions.filter((direction) => cell[direction] === true).length === 3
         })
       })
       .flat()
-    const doorCell = MUTATION_WARNING_extractRandomItemFromArray(positionsWith3Walls)
+
+    const doorCell = MUTATION_WARNING_extractRandomItemFromArray(positionsWith3WallsInBucket)
+    if (!doorCell) {
+      continue
+    }
+
     doorPosition = { x: doorCell.x, y: doorCell.y }
     const doorDirectionWithoutWall = directions.find((direction) => !doorCell[direction])
     bouncerPosition = {
@@ -715,6 +729,21 @@ Rune.initLogic({
         const isPlayersPositionOrNeighbor = playersPositionOrNeighbors.some((item) => arePositionsEqual(position, item))
         return !isPlayersPositionOrNeighbor
       })
+
+      console.log("*****************")
+      console.log(`* level ${levelIndex} *`)
+      console.log("*****************")
+      console.log(
+        JSON.stringify(
+          {
+            startingPlayersPosition,
+            playersPositionOrNeighbors,
+            availablePositionsBucket,
+          },
+          null,
+          2,
+        ),
+      )
 
       const { maze, bouncerPosition, doorPosition } = MUTATION_WARNING_generateMazeWithBouncerAndDoor({
         positionsBucket: availablePositionsBucket,

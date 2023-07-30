@@ -45,7 +45,7 @@ export const Maze = () => {
     })
   }, [level, players, yourPlayerId])
 
-  const isBouncerHidden = bouncer.isSatisfiedWithYourMoves
+  const isBouncerHidden = !bouncer.isFound || bouncer.isSatisfiedWithYourMoves
 
   return (
     <Root>
