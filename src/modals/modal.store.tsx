@@ -1,7 +1,8 @@
 import { create } from "zustand"
 import { ModalConfig } from "./modal.types"
+import { DELAY_BETWEEN_DANCES_MS } from "../rune/logic"
 
-export const DEFAULT_AUTO_CLOSE_MS = 2500
+export const DEFAULT_AUTO_CLOSE_MS = DELAY_BETWEEN_DANCES_MS - 500
 
 type OpenModalOptions = {
   autoCloseMs?: number

@@ -7,13 +7,14 @@ import {
   createArray,
   getMaxInventorySize,
 } from "../rune/logic"
-import { useGame, useYourPlayerId } from "../stores/game.store"
+import { useGame, useLastDanceMovePerformed, useYourPlayerId } from "../stores/game.store"
 import { theme } from "../theme/theme"
 import { UIMoveButton } from "./ui/UIMoveButton"
 
 export const MovesInventory = () => {
   const game = useGame()
   const yourPlayerId = useYourPlayerId()
+  const lastDanceMovePerformed = useLastDanceMovePerformed()
 
   const player = yourPlayerId ? game.players[yourPlayerId] : undefined
   const moves = player?.moves || []
@@ -24,13 +25,13 @@ export const MovesInventory = () => {
       if (!player) {
         return
       }
-      const canPerformMove = checkIfCanPerformMove({ player, move })
+      const canPerformMove = checkIfCanPerformMove({ player, move, lastDanceMovePerformed })
       if (!canPerformMove) {
         return
       }
       Rune.actions.performMove({ move })
     },
-    [game, yourPlayerId],
+    [game, yourPlayerId, lastDanceMovePerformed],
   )
 
   const inventorySize = getMaxInventorySize({ numberOfPlayers: Object.keys(game.players).length })

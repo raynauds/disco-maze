@@ -50,6 +50,8 @@ export type MovePerformance = {
   isPerformed: boolean
 }
 
+export type LastDanceMovePerformed = { moveName: MoveName; performancPlayerId: string; performanceTimeSeconds: number }
+
 export type LevelData = {
   level: number
   maze: Cell[][]
@@ -76,6 +78,7 @@ export type GameState = {
   }
   levels: LevelData[]
   currentLevelIndex: number
+  lastDanceMovePerformed: LastDanceMovePerformed | null
 }
 
 type GameActions = {
@@ -90,7 +93,7 @@ declare global {
 /*********************************************************************************************************************
  * DATA
  *********************************************************************************************************************/
-export const MAZE_SIZE = 9
+export const MAZE_SIZE = 4
 
 export const MAX_LEVEL = 8
 
@@ -98,6 +101,7 @@ export const MAX_GAME_TIME_SECONDS = 5 * 60 // TODO!: balance
 export const EXTRA_SECOND_BONUS = 1
 
 export const DELAY_BETWEEN_MOVES_MS = 150
+export const DELAY_BETWEEN_DANCES_MS = 2000
 
 export const MOVE_INVENTORY_SIZE = {
   ONE_PLAYER: 4,
@@ -120,6 +124,7 @@ export const emptyGameState: GameState = {
   players: {},
   levels: [],
   currentLevelIndex: 0,
+  lastDanceMovePerformed: null,
 }
 
 /*********************************************************************************************************************
@@ -480,9 +485,25 @@ export const MUTATION_WARNING_extractPositionThatDoesNotSeeBouncerOrMove = ({
   return randomPosition
 }
 
-export const checkIfCanPerformMove = ({ player, move }: { player: PlayerData; move: MoveName }) => {
+export const checkIfCanPerformMove = ({
+  player,
+  move,
+  lastDanceMovePerformed,
+}: {
+  player: PlayerData
+  move: MoveName
+  lastDanceMovePerformed: LastDanceMovePerformed | null
+}) => {
   const canPerformMove = player.moves.includes(move)
   if (!canPerformMove) {
+    return false
+  }
+
+  const currentTime = Rune.gameTimeInSeconds()
+  const hasDelayPassed =
+    !lastDanceMovePerformed ||
+    currentTime - lastDanceMovePerformed.performanceTimeSeconds >= DELAY_BETWEEN_DANCES_MS / 1000
+  if (!hasDelayPassed) {
     return false
   }
 
@@ -701,6 +722,7 @@ Rune.initLogic({
       players,
       levels,
       currentLevelIndex: 0,
+      lastDanceMovePerformed: null,
     }
 
     return game
@@ -782,28 +804,39 @@ Rune.initLogic({
       if (!player) {
         throw Rune.invalidAction()
       }
-      const canPerformMove = checkIfCanPerformMove({ player, move })
+      const canPerformMove = checkIfCanPerformMove({
+        player,
+        move,
+        lastDanceMovePerformed: game.lastDanceMovePerformed,
+      })
       if (!canPerformMove) {
         throw Rune.invalidAction()
+      }
+
+      console.log("update last move performed")
+      game.lastDanceMovePerformed = {
+        moveName: move,
+        performancPlayerId: playerId,
+        performanceTimeSeconds: Rune.gameTimeInSeconds(),
       }
 
       const { bouncer } = game.levels[game.currentLevelIndex]
 
       if (!bouncer || !bouncer.isFound) {
-        throw Rune.invalidAction()
+        return
       }
 
       const distanceToBouncer =
         Math.abs(player.position.x - bouncer.position.x) + Math.abs(player.position.y - bouncer.position.y)
       if (distanceToBouncer > 1) {
-        throw Rune.invalidAction()
+        return
       }
 
       const nextMoveRequired = bouncer.movesRequired.find((moveRequired) => {
         return !moveRequired.isPerformed
       })
       if (!nextMoveRequired || nextMoveRequired.id !== move) {
-        throw Rune.invalidAction()
+        return
       }
 
       nextMoveRequired.isPerformed = true
