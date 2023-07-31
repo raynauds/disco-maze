@@ -79,11 +79,11 @@ const LevelIndicatorsContainer = styled.div`
 `
 
 const LevelIndicator = styled(UIImage)<{ $availableSpace: number }>`
-  width: ${(props) => props.$availableSpace * 0.07}px;
-  height: ${(props) => props.$availableSpace * 0.07}px;
+  width: ${(props) => props.$availableSpace * 0.055}px;
+  height: ${(props) => props.$availableSpace * 0.055}px;
   margin-right: ${(props) => props.$availableSpace * 0.01}px;
 `
 
 const TimerText = styled.p<{ $availableSpace: number }>`
-  font-size: ${(props) => props.$availableSpace * 0.07}px;
+  font-size: ${(props) => props.$availableSpace * 0.06}px;
 `

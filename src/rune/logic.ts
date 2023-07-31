@@ -111,7 +111,7 @@ export const MAZE_SIZE = 9
 
 export const MAX_LEVEL = 8
 
-export const MAX_GAME_TIME_SECONDS = 5 * 60 // TODO!: balance
+export const MAX_GAME_TIME_SECONDS = 10 * 60
 export const EXTRA_SECOND_BONUS = 1
 
 export const DELAY_BETWEEN_MOVES_MS = 150
