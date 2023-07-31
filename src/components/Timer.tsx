@@ -5,6 +5,7 @@ import { MAX_GAME_TIME_SECONDS, MAX_LEVEL, createArray } from "../rune/logic"
 import { useDimensions } from "../stores/dimensions.store"
 import { useGame } from "../stores/game.store"
 import { theme } from "../theme/theme"
+import { UIImage } from "./ui/UIImage"
 
 export const Timer = () => {
   const { availableWidth, availableSpaceAroundMaze } = useDimensions()
@@ -37,7 +38,20 @@ export const Timer = () => {
               : game.currentLevelIndex === index
               ? images.radioFilledGrey
               : images.radioEmpty
-          return <LevelIndicator key={index} src={src} $availableSpace={availableSpaceAroundMaze} />
+          return (
+            <LevelIndicator
+              key={index}
+              src={src}
+              $availableSpace={availableSpaceAroundMaze}
+              alt={`floor ${index + 1} ${
+                game.currentLevelIndex > index
+                  ? "completed"
+                  : game.currentLevelIndex === index
+                  ? "in progress"
+                  : "not yet unlocked"
+              }`}
+            />
+          )
         })}
       </LevelIndicatorsContainer>
 
@@ -64,7 +78,7 @@ const LevelIndicatorsContainer = styled.div`
   align-items: center;
 `
 
-const LevelIndicator = styled.img<{ $availableSpace: number }>`
+const LevelIndicator = styled(UIImage)<{ $availableSpace: number }>`
   width: ${(props) => props.$availableSpace * 0.07}px;
   height: ${(props) => props.$availableSpace * 0.07}px;
   margin-right: ${(props) => props.$availableSpace * 0.01}px;

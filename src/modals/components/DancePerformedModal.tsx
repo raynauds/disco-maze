@@ -1,6 +1,6 @@
 import { useMemo } from "react"
 import { styled } from "styled-components"
-import { UIImage, UIPixelatedImage } from "../../components/ui/UIImage"
+import { UIContainedImage, UIImage, UIPixelatedImage } from "../../components/ui/UIImage"
 import { images } from "../../data/images"
 import { MoveName, MovePerformedType } from "../../rune/logic"
 import { useDimensions } from "../../stores/dimensions.store"
@@ -32,7 +32,7 @@ export const DancePerformedModal = ({ type, userName, userProfilePictureSrc, mov
       <TextContainer>
         <SectionContainer>
           <UserAvatarContainer $availableWidth={availableWidth}>
-            <UIImage src={userProfilePictureSrc || images.fogOfWar} alt={`user: ${userName}`} />
+            <UIContainedImage src={userProfilePictureSrc || images.fogOfWar} alt={`user: ${userName}`} />
           </UserAvatarContainer>
           <UserName $fontSizeRatio={fontSizeRatio}>{userName}</UserName>
         </SectionContainer>
@@ -110,7 +110,7 @@ const Title = styled.h2<{ $fontSizeRatio: number }>`
   text-align: center;
 `
 
-const MoveImage = styled.img`
+const MoveImage = styled(UIImage)`
   width: 100%;
   margin-top: ${theme.spacing(2)};
 `

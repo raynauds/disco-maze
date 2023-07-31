@@ -4,7 +4,7 @@ import { images } from "../../data/images"
 import { MoveName } from "../../rune/logic"
 import { useDimensions } from "../../stores/dimensions.store"
 import { theme } from "../../theme/theme"
-import { UIImage } from "./UIImage"
+import { UIContainedImage, UIImage } from "./UIImage"
 
 export type UIMoveSize = "inside-cell" | "small" | "medium" | "large" | number
 
@@ -28,7 +28,7 @@ export const UIMove = ({ id, size, isPerformed }: UIMoveProps) => {
 
   return (
     <Root $size={typeof size === "number" ? size : sizes[size]} $isPerformed={isPerformed}>
-      {id ? <UIImage src={images.moves.small[id]} alt={`disco move: ${id}`} /> : <EmptyContent />}
+      {id ? <UIContainedImage src={images.moves.small[id]} alt={`disco move: ${id}`} /> : <EmptyContent />}
       {isPerformed ? (
         <CheckIcon src={images.checkmark} alt="move slot performed" $availableSpace={availableSpaceAroundMaze} />
       ) : null}
@@ -49,7 +49,7 @@ const EmptyContent = styled.div`
   border-radius: 20%;
 `
 
-const CheckIcon = styled.img<{ $availableSpace: number }>`
+const CheckIcon = styled(UIImage)<{ $availableSpace: number }>`
   position: absolute;
   bottom: 0;
   right: 0;

@@ -1,7 +1,8 @@
-import { styled } from "styled-components"
-import { Cell } from "../../rune/logic"
 import { useMemo } from "react"
+import { styled } from "styled-components"
 import { images } from "../../data/images"
+import { Cell } from "../../rune/logic"
+import { UIImage } from "./UIImage"
 
 type UIMazeCellProps = {
   cell: Cell
@@ -29,10 +30,10 @@ export const UIMazeCell = ({ cell }: UIMazeCellProps) => {
     return images.walls.top
   }, [cell])
 
-  return <Root src={imageSource}></Root>
+  return <Root src={imageSource} alt=""></Root>
 }
 
-const Root = styled.img`
+const Root = styled(UIImage)`
   width: 100%;
   height: 100%;
   image-rendering: pixelated;

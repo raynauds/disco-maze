@@ -3,6 +3,7 @@ import { images } from "../../data/images"
 import { MoveName } from "../../rune/logic"
 import { useDimensions } from "../../stores/dimensions.store"
 import { theme } from "../../theme/theme"
+import { UIImage } from "./UIImage"
 import { UIMove } from "./UIMove"
 
 type UIMoveButtonProps = {
@@ -43,7 +44,7 @@ const Root = styled.button<{ $size: number; $hasMove: boolean }>`
   background-repeat: no-repeat;
 `
 
-const MoveSlotDisabledIcon = styled.img`
+const MoveSlotDisabledIcon = styled(UIImage)`
   position: absolute;
   inset: 0;
   scale: 0.8;

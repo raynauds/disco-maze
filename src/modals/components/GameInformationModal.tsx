@@ -1,6 +1,6 @@
 import { styled } from "styled-components"
 import { UIButton } from "../../components/ui/UIButton"
-import { UIImage, UIPixelatedImage } from "../../components/ui/UIImage"
+import { UIContainedImage, UIPixelatedImage } from "../../components/ui/UIImage"
 import { UIMove } from "../../components/ui/UIMove"
 import { images } from "../../data/images"
 import { MAX_LEVEL } from "../../rune/logic"
@@ -136,7 +136,7 @@ const MoveChecked = () => {
         <UIMove id="the-turn-around" size={availableWidth * 0.08} />
       </MoveContainer>
       <MoveCheckContainer $availableWidth={availableWidth}>
-        <UIImage src={images.checkmark} alt="button for move" />
+        <UIContainedImage src={images.checkmark} alt="button for move" />
       </MoveCheckContainer>
     </>
   )
@@ -209,7 +209,7 @@ const MoveContainer = styled.div<{ $availableWidth: number }>`
   align-items: center;
 `
 
-const MoveButtonImage = styled(UIImage)<{ $availableWidth: number }>`
+const MoveButtonImage = styled(UIContainedImage)<{ $availableWidth: number }>`
   width: ${(props) => props.$availableWidth * 0.07}px;
   height: ${(props) => props.$availableWidth * 0.07}px;
 `

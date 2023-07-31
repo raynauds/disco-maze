@@ -1,8 +1,9 @@
+import { useEffect, useRef } from "react"
 import { styled } from "styled-components"
 import { images } from "../../data/images"
 import { Direction } from "../../rune/logic"
 import { useDimensions } from "../../stores/dimensions.store"
-import { useEffect, useRef } from "react"
+import { UIImage } from "./UIImage"
 
 type UIControlButtonProps = {
   direction: Direction
@@ -81,7 +82,7 @@ const Root = styled.button<{ $availableSpace: number }>`
   }
 `
 
-const ControlImage = styled.img`
+const ControlImage = styled(UIImage)`
   width: 100%;
   height: 100%;
   object-fit: contain;
