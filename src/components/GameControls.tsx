@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useState } from "react"
 import { styled } from "styled-components"
 import { DELAY_BETWEEN_MOVES_MS, Direction, checkIfCanMove } from "../rune/logic"
 import { useCurrentLevel, useGame, useYourPlayerId } from "../stores/game.store"
@@ -37,28 +37,29 @@ export const GameControls = () => {
     [isChangingLevel, yourPlayerId, lastMoveTimestamp, game],
   )
 
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      switch (event.key) {
-        case "ArrowUp":
-          move("top")
-          break
-        case "ArrowRight":
-          move("right")
-          break
-        case "ArrowDown":
-          move("bottom")
-          break
-        case "ArrowLeft":
-          move("left")
-          break
-      }
-    }
-    document.addEventListener("keydown", onKeyDown)
-    return () => {
-      document.removeEventListener("keydown", onKeyDown)
-    }
-  }, [move])
+  // [DEBUG ONLY] Uncomment to control the character with arrow keys
+  // useEffect(() => {
+  //   const onKeyDown = (event: KeyboardEvent) => {
+  //     switch (event.key) {
+  //       case "ArrowUp":
+  //         move("top")
+  //         break
+  //       case "ArrowRight":
+  //         move("right")
+  //         break
+  //       case "ArrowDown":
+  //         move("bottom")
+  //         break
+  //       case "ArrowLeft":
+  //         move("left")
+  //         break
+  //     }
+  //   }
+  //   document.addEventListener("keydown", onKeyDown)
+  //   return () => {
+  //     document.removeEventListener("keydown", onKeyDown)
+  //   }
+  // }, [move])
 
   const actionFrequencyMs = DELAY_BETWEEN_MOVES_MS * 2
 
