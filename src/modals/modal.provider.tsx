@@ -18,6 +18,8 @@ import { GameInformationModal } from "./components/GameInformationModal"
 import { useIsModalVisible, useModal } from "./modal.store"
 import { ModalConfig } from "./modal.types"
 
+const BACKGROUND_MUTE_MS = 2000
+
 type ModalProviderProps = {
   children: ReactNode
 }
@@ -79,7 +81,7 @@ export const ModalProvider = ({ children }: ModalProviderProps) => {
       }
       const timeout = setTimeout(() => {
         unmuteBackgroundMusic()
-      }, 1500)
+      }, BACKGROUND_MUTE_MS)
 
       return () => {
         clearTimeout(timeout)
