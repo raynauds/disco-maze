@@ -6,3 +6,12 @@ The world's wildest disco party is taking place on the rooftop of an eight-story
 
 - Images from Kenney ([www.kenney.nl](www.kenney.nl))
 - Images generated using [DALL-E](https://labs.openai.com)
+- Icon uses a picture from [Efe Kurnaz](https://unsplash.com/fr/@efekurnaz) (Unsplash)
+- Sounds from [Pixabay](https://pixabay.com)
+  - Fun Disco 1 (Musictown)
+  - Discoball (SPmusic)
+  - Disco Funk chase scene
+  - Disco Groove (QubeSounds)
+  - Dance Polo (Lesfm)
+  - Funky Disco (Nesterouk)
+  - That Funk Show (Diamond_Tunes)
