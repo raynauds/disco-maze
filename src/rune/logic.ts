@@ -707,7 +707,6 @@ Rune.initLogic({
 
     const maxMovesCount = getMaxAvailableMovesCount({ numberOfPlayers: allPlayerIds.length })
     const possibleNewMoves = randomizeArray([...moves]).filter((_, i) => i < maxMovesCount)
-    let lastMoveSelected: MoveName | undefined
     let alreadyFoundMoves: MoveName[] = []
 
     const levels: LevelData[] = []
@@ -734,17 +733,22 @@ Rune.initLogic({
         positionsBucket: availablePositionsBucket,
       })
 
+      const hasFoundAllPossibleMoves = alreadyFoundMoves.length === possibleNewMoves.length
+
       const { bouncer, door, move } = MUTATION_WARNING_generateBouncerDoorAndMove({
         positionsBucket: availablePositionsBucket,
         bouncerPosition,
         doorPosition,
-        possibleNewMoves: possibleNewMoves.filter((move) => move !== lastMoveSelected),
+        possibleNewMoves: hasFoundAllPossibleMoves
+          ? possibleNewMoves
+          : possibleNewMoves.filter((move) => {
+              return !alreadyFoundMoves.includes(move)
+            }),
         alreadyFoundMoves,
         numberOfMoves: levelIndex + 1,
       })
 
       alreadyFoundMoves = Array.from(new Set([...alreadyFoundMoves, move.id]))
-      lastMoveSelected = move.id
 
       levels.push({
         level: levelIndex + 1,
