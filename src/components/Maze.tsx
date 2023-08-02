@@ -63,7 +63,11 @@ export const Maze = () => {
             if (!isVisible) {
               return <div key={index} />
             }
-            return <UIMazeCell key={index} cell={cell} />
+            return (
+              <CellContainer $cellWidth={cellWidth}>
+                <UIMazeCell key={index} cell={cell} />
+              </CellContainer>
+            )
           })}
         </CellsContainer>
 
@@ -123,7 +127,11 @@ export const Maze = () => {
             if (isVisible) {
               return <div key={index} />
             }
-            return <UIFogOfWar key={index} />
+            return (
+              <CellContainer $cellWidth={cellWidth}>
+                <UIFogOfWar key={index} />
+              </CellContainer>
+            )
           })}
         </CellsContainer>
 
@@ -214,6 +222,11 @@ const CellsContainer = styled.div<{ $cellWidth: number }>`
   width: ${(props) => props.$cellWidth * MAZE_SIZE};
   height: ${(props) => props.$cellWidth * MAZE_SIZE};
   border: 1px solid lightgrey;
+`
+
+const CellContainer = styled.div<{ $cellWidth: number }>`
+  width: ${(props) => props.$cellWidth};
+  height: ${(props) => props.$cellWidth};
 `
 
 const Overlay = styled(animated.div)`
