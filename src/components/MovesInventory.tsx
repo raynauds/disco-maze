@@ -25,7 +25,12 @@ export const MovesInventory = () => {
       if (!player) {
         return
       }
-      const canPerformMove = checkIfCanPerformMove({ player, move, lastDanceMovePerformed })
+      const canPerformMove = checkIfCanPerformMove({
+        player,
+        move,
+        lastDanceMovePerformed,
+        gameTimeInSeconds: Rune.gameTimeInSeconds(),
+      })
       if (!canPerformMove) {
         return
       }

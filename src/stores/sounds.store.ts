@@ -50,7 +50,7 @@ export const useBackgroundMusic = () => {
 
   useEffect(() => {
     play()
-    setBackgroundMusic({ play, stop, mute: () => sound.mute(true), unmute: () => sound.mute(false) })
+    setBackgroundMusic({ play, stop, mute: () => sound?.mute(true), unmute: () => sound?.mute(false) })
 
     return () => {
       stop()

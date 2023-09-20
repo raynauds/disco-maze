@@ -504,17 +504,19 @@ export const checkIfCanPerformMove = ({
   player,
   move,
   lastDanceMovePerformed,
+  gameTimeInSeconds,
 }: {
   player: PlayerData
   move: MoveName
   lastDanceMovePerformed: LastDanceMovePerformed | null
+  gameTimeInSeconds: number
 }) => {
   const canPerformMove = player.moves.includes(move)
   if (!canPerformMove) {
     return false
   }
 
-  const currentTime = Rune.gameTimeInSeconds()
+  const currentTime = gameTimeInSeconds
   const hasDelayPassed =
     !lastDanceMovePerformed ||
     currentTime - lastDanceMovePerformed.performanceTimeSeconds >= DELAY_BETWEEN_DANCES_MS / 1000
@@ -865,6 +867,7 @@ Rune.initLogic({
         player,
         move,
         lastDanceMovePerformed: game.lastDanceMovePerformed,
+        gameTimeInSeconds: Rune.gameTimeInSeconds(),
       })
       if (!canPerformMove) {
         throw Rune.invalidAction()
