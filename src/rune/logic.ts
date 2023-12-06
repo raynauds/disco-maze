@@ -852,7 +852,7 @@ Rune.initLogic({
           return player.hasFoundDoor
         })
       if (isGameFinished) {
-        const allPlayersWin = getGameOverPlayers({ players: game.players, score: Rune.gameTimeInSeconds() })
+        const allPlayersWin = getGameOverPlayers({ players: game.players, score: Math.floor(Rune.gameTime() / 1000) })
         Rune.gameOver({ players: allPlayersWin })
       } else if (hasEveryPLayerFoundDoor) {
         goToNextLevel(game)
@@ -867,7 +867,7 @@ Rune.initLogic({
         player,
         move,
         lastDanceMovePerformed: game.lastDanceMovePerformed,
-        gameTimeInSeconds: Rune.gameTimeInSeconds(),
+        gameTimeInSeconds: Math.floor(Rune.gameTime() / 1000),
       })
       if (!canPerformMove) {
         throw Rune.invalidAction()
@@ -892,7 +892,7 @@ Rune.initLogic({
       game.lastDanceMovePerformed = {
         moveName: move,
         performancePlayerId: playerId,
-        performanceTimeSeconds: Rune.gameTimeInSeconds(),
+        performanceTimeSeconds: Math.floor(Rune.gameTime() / 1000),
         type: movePerformedType,
       }
 
@@ -928,7 +928,8 @@ Rune.initLogic({
     },
   },
   update: ({ game }) => {
-    const gameTimeInSeconds = Rune.gameTimeInSeconds()
+    console.log("Math.floor(Rune.gameTime() / 1000)", Math.floor(Rune.gameTime() / 1000))
+    const gameTimeInSeconds = Math.floor(Rune.gameTime() / 1000)
     if (gameTimeInSeconds > MAX_GAME_TIME_SECONDS + EXTRA_SECOND_BONUS) {
       const allPlayersLose = getGameOverPlayers({ players: game.players, score: game.currentLevelIndex })
       Rune.gameOver({ players: allPlayersLose })

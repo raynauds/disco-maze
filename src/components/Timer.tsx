@@ -15,7 +15,7 @@ export const Timer = () => {
 
   useEffect(() => {
     const updateGameTime = () => {
-      setGameTimeInSeconds(Rune.gameTimeInSeconds())
+      setGameTimeInSeconds(Math.floor(Rune.gameTime() / 1000))
     }
     const interval = setInterval(updateGameTime, 1000)
     return () => {

@@ -29,7 +29,7 @@ export const MovesInventory = () => {
         player,
         move,
         lastDanceMovePerformed,
-        gameTimeInSeconds: Rune.gameTimeInSeconds(),
+        gameTimeInSeconds: Math.floor(Rune.gameTime() / 1000),
       })
       if (!canPerformMove) {
         return
